@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@netlify/plugin-nextjs": "^5.10.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
