@@ -1,0 +1,53 @@
+# Dependencies
+frontend/node_modules/
+backend/node_modules/
+node_modules/  # Root-level, if you install anything there
+
+# Testing (Jest, React Testing Library, etc.)
+frontend/coverage/
+frontend/jest-cache/
+backend/coverage/
+backend/jest-cache/
+
+# Next.js (Frontend)
+frontend/.next/
+frontend/out/
+
+# Production Builds
+frontend/build/  # Optional, if you customize Next.js to use this
+backend/dist/    # Common backend output directory
+
+# Logs
+frontend/*.log
+backend/*.log
+*.log
+logs/
+npm-debug.log*
+
+# Environment Variables
+frontend/.env
+frontend/.env*.local
+backend/.env
+backend/.env*.local
+.env  # Root-level, if applicable
+.env*.local
+
+# Misc
+.DS_Store
+*.pem
+*.swp
+*.swo
+*.bak
+
+# Vercel (Frontend)
+frontend/.vercel/
+
+# TypeScript
+frontend/*.tsbuildinfo
+backend/*.tsbuildinfo
+frontend/next-env.d.ts
+*.tsbuildinfo  # Root-level catch-all
+
+# Editor/IDE (Optional, uncomment if needed)
+#.vscode/
+#.idea/
