@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "jest --silent && next dev --turbopack --port 3000",
-    "build": "NODE_ENV=production next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -50,7 +50,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
+      "lint --fix",
       "prettier --write"
     ],
     "*.{json,css,md}": [
