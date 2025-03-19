@@ -1,75 +1,70 @@
 import * as React from 'react';
+import {
+  Box,
+  Card as GrommetCard,
+  CardHeader as GrommetCardHeader,
+  CardBody,
+  CardFooter as GrommetCardFooter,
+  Text,
+  Heading,
+} from 'grommet';
 
-import { cn } from '@/lib/utils';
-
-function Card({ className, ...props }: React.ComponentProps<'div'>) {
+// Card component
+function Card({ children, ...props }: React.ComponentProps<typeof GrommetCard>) {
   return (
-    <div
-      data-slot="card"
-      className={cn(
-        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
-        className
-      )}
+    <GrommetCard
+      background="light-1"
+      elevation="small"
+      pad="medium"
+      round="small"
+      border={{ color: 'light-3', size: 'xsmall' }}
       {...props}
-    />
+    >
+      {children}
+    </GrommetCard>
   );
 }
 
-function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
+// CardHeader component
+function CardHeader({ children, ...props }: React.ComponentProps<typeof Box>) {
   return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-[data-slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
-        className
-      )}
-      {...props}
-    />
+    <GrommetCardHeader gap="small" {...props}>
+      {children}
+    </GrommetCardHeader>
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
+// CardTitle component
+function CardTitle({ children, ...props }: React.ComponentProps<typeof Heading>) {
   return (
-    <div
-      data-slot="card-title"
-      className={cn('leading-none font-semibold', className)}
-      {...props}
-    />
+    <Heading level={3} margin="none" size="small" {...props}>
+      {children}
+    </Heading>
   );
 }
 
-function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
+// CardDescription component
+function CardDescription({ children, ...props }: React.ComponentProps<typeof Text>) {
   return (
-    <div
-      data-slot="card-description"
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
+    <Text size="small" color="dark-4" {...props}>
+      {children}
+    </Text>
   );
 }
 
-function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="card-action"
-      className={cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', className)}
-      {...props}
-    />
-  );
+// CardAction component
+function CardAction({ children, ...props }: React.ComponentProps<typeof Box>) {
+  return <Box {...props}>{children}</Box>;
 }
 
-function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot="card-content" className={cn('px-6', className)} {...props} />;
+// CardContent component
+function CardContent({ children, ...props }: React.ComponentProps<typeof CardBody>) {
+  return <CardBody {...props}>{children}</CardBody>;
 }
 
-function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="card-footer"
-      className={cn('flex items-center px-6 [.border-t]:pt-6', className)}
-      {...props}
-    />
-  );
+// CardFooter component
+function CardFooter({ children, ...props }: React.ComponentProps<typeof GrommetCardFooter>) {
+  return <GrommetCardFooter {...props}>{children}</GrommetCardFooter>;
 }
 
 export { Card, CardHeader, CardFooter, CardTitle, CardAction, CardDescription, CardContent };

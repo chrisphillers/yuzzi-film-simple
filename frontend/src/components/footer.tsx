@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { Footer as GrommetFooter, Box, Anchor } from 'grommet';
 
 const navItems = [
   { name: 'INSTAGRAM', href: '/journal' },
@@ -9,18 +9,30 @@ const navItems = [
 
 export const Footer = () => {
   return (
-    <footer className="mt-8 w-full bg-black py-2 text-center text-white">
-      <div className="flex justify-center space-x-4">
+    <GrommetFooter
+      background="brand"
+      pad="small"
+      direction="row"
+      justify="center"
+      margin={{ top: 'medium' }}
+    >
+      <Box direction="row" gap="medium">
         {navItems.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            className={cn('text-sm tracking-wide transition-opacity hover:opacity-80')}
-          >
-            {item.name}
+          <Link key={item.name} href={item.href} passHref legacyBehavior>
+            <Anchor
+              label={item.name}
+              size="small"
+              color="light-1"
+              style={{
+                letterSpacing: '0.05em',
+                textDecoration: 'none',
+                transition: 'opacity 0.2s',
+              }}
+              hoverIndicator={{ opacity: 0.8 }}
+            />
           </Link>
         ))}
-      </div>
-    </footer>
+      </Box>
+    </GrommetFooter>
   );
 };
