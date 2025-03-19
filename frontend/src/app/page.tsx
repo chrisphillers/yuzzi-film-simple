@@ -1,7 +1,7 @@
 import { getFeatureFilm } from '@/lib/data';
 import { FilmFeature } from '@/components/film-feature';
 import { FilmArticleContent } from '@/components/film-article';
-import { Box, ThemeContext } from 'grommet';
+import { Box } from 'grommet';
 import { ModalMenu } from '@/components/nav-bar';
 
 export default async function Home() {

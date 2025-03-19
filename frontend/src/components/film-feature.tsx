@@ -9,12 +9,7 @@ interface FilmFeatureProps {
 
 export function FilmFeature({ film, content }: FilmFeatureProps) {
   return (
-    <Box
-      width="700px"
-      // maxWidth="500px"
-      // alignContent='center'
-      margin={{ horizontal: 'auto' }}
-    >
+    <Box width="700px" margin={{ horizontal: 'auto' }}>
       <Box margin={{ bottom: 'medium' }}>
         {/* Film placeholder with background color */}
         <Box
@@ -47,14 +42,7 @@ export function FilmFeature({ film, content }: FilmFeatureProps) {
         </Button>
       </Box>
 
-      <Box
-        alignContent="center"
-        justify="center"
-        align="center"
-
-        // width="medium"
-        // margin={{ horizontal: 'auto' }}
-      >
+      <Box alignContent="center" justify="center" align="center">
         {content}
       </Box>
     </Box>

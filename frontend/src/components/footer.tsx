@@ -22,13 +22,13 @@ export const Footer = () => {
             <Anchor
               label={item.name}
               size="small"
-              color="light-1"
-              style={{
-                letterSpacing: '0.05em',
-                textDecoration: 'none',
-                transition: 'opacity 0.2s',
-              }}
-              hoverIndicator={{ opacity: 0.8 }}
+              // color="light-1"
+              // style={{
+              //   letterSpacing: '0.05em',
+              //   textDecoration: 'none',
+              //   transition: 'opacity 0.2s',
+              // }}
+              // hoverIndicator={{ opacity: 0.8 }}
             />
           </Link>
         ))}
