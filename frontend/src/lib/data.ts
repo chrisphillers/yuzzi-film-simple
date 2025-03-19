@@ -19,7 +19,6 @@ export type FilmArticle = {
 
 // Dummy data for server-side rendering
 export async function getFeatureFilm(): Promise<FilmArticle> {
-  // In a real application, this would fetch from an API
   return {
     film: {
       title: 'LUTTE JEUNESSE',
