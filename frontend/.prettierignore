@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Testing (Jest, React Testing Library, etc.)
+coverage/
+jest-cache/
+
+# Next.js (Frontend)
+.next/
+out/
+
+# Production Builds
+build/  # Optional, if you customize Next.js to use this
+backend/dist/    # Common backend output directory
+
+# Logs
+*.log
+backend/*.log
+logs/
+npm-debug.log*
+
+# Environment Variables
+.env
+.env*.local
+backend/.env
+backend/.env*.local
+
+# Misc
+.DS_Store
+*.pem
+*.swp
+*.swo
+*.bak
+
+# TypeScript
+*.tsbuildinfo
+backend/*.tsbuildinfo
+next-env.d.ts
+
+# Editor/IDE (Optional, uncomment if needed)
+#.vscode/
+#.idea/
