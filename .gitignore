@@ -41,3 +41,5 @@ dist/
 build/
 logs/
 *.tsbuildinfo 
+# Local Netlify folder
+.netlify
