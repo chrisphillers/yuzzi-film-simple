@@ -37,6 +37,9 @@ backend/.env*.local
 backend/*.tsbuildinfo
 next-env.d.ts
 
+# Local Netlify folder
+.netlify
+
 # Editor/IDE (Optional, uncomment if needed)
 #.vscode/
 #.idea/
