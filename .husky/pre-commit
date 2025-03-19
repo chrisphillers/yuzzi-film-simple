@@ -1,0 +1,2 @@
+# Change to frontend directory and run lint-staged
+cd frontend && npx lint-staged
