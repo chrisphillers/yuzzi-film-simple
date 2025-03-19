@@ -7,23 +7,9 @@ interface FilmArticleContentProps {
 
 export function FilmArticleContent({ article }: FilmArticleContentProps) {
   return (
-    <Box
-      // width="large"
-      // margin={{ horizontal: 'auto' }}
-      align="center"
-      margin={'large'}
-      // maxWidth="400px"
-    >
+    <Box align="center" margin={'large'}>
       {article.content.map((paragraph, index) => (
-        <Paragraph
-          margin={'small'}
-          //  alignSelf='stretch'
-          key={index}
-          fill={true}
-
-          //  margin={{ bottom: 'medium' }}
-          // size="large"
-        >
+        <Paragraph margin={'small'} key={index} fill={true}>
           {paragraph}
         </Paragraph>
       ))}
