@@ -18,10 +18,7 @@ export const NavBar2 = () => {
         {navItems.map((item) => {
           return <Anchor key={item.name}>{item.name}</Anchor>;
         })}
-
-        {/* <Menu></Menu> */}
       </Nav>
-      {/* < ModalMenu></ModalMenu> */}
     </div>
   );
 };

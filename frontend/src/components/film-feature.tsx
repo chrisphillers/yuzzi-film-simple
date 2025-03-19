@@ -1,6 +1,7 @@
 import { type Film } from '@/lib/data';
 // import { Button } from '@/components/ui/button';
 import { Box, Text, Button } from 'grommet';
+import { Hero } from './hero';
 
 interface FilmFeatureProps {
   film: Film;
@@ -9,23 +10,8 @@ interface FilmFeatureProps {
 
 export function FilmFeature({ film, content }: FilmFeatureProps) {
   return (
-    <Box width="700px" margin={{ horizontal: 'auto' }}>
-      <Box margin={{ bottom: 'medium' }}>
-        {/* Film placeholder with background color */}
-        <Box
-          height="medium"
-          background={{ color: film.backgroundColor || '#333' }}
-          style={{ position: 'relative', aspectRatio: '16/9' }}
-        >
-          {/* Filmstrip design elements for cinematic feel */}
-          <Box fill align="center" justify="center" style={{ position: 'absolute' }}>
-            <Text size="xlarge" weight="bold" color="white" opacity="0.3">
-              {film.title}
-            </Text>
-          </Box>
-        </Box>
-      </Box>
-
+    <Box width="900px" margin={{ horizontal: 'auto' }} gap="small">
+      <Hero title={film.title} />
       <Box>
         <Text>
           <Text weight="bold">LUTTE JEUNESSE</Text> a film by{' '}
