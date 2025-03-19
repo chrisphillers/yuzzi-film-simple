@@ -9,14 +9,10 @@ export default async function Home() {
   const featureFilm = await getFeatureFilm();
 
   return (
-    <Box
-      width="large"
-      margin={{ horizontal: 'auto', top: 'medium' }}
-      // alignContent="center"
-    >
+    <Box width="large" margin={{ horizontal: 'auto' }}>
       <FilmFeature film={featureFilm.film} content={<FilmArticleContent article={featureFilm} />} />
 
-      <ModalMenu></ModalMenu>
+      <ModalMenu />
     </Box>
   );
 }
