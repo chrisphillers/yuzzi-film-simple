@@ -1,5 +1,6 @@
 import { type Film } from '@/lib/data';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
+import { Box, Text, Button } from 'grommet';
 
 interface FilmFeatureProps {
   film: Film;
@@ -8,34 +9,54 @@ interface FilmFeatureProps {
 
 export function FilmFeature({ film, content }: FilmFeatureProps) {
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      <div className="mb-4">
+    <Box
+      width="700px"
+      // maxWidth="500px"
+      // alignContent='center'
+      margin={{ horizontal: 'auto' }}
+    >
+      <Box margin={{ bottom: 'medium' }}>
         {/* Film placeholder with background color */}
-        <div
-          className="relative aspect-[16/9] w-full"
-          style={{ backgroundColor: film.backgroundColor || '#333' }}
+        <Box
+          height="medium"
+          background={{ color: film.backgroundColor || '#333' }}
+          style={{ position: 'relative', aspectRatio: '16/9' }}
         >
           {/* Filmstrip design elements for cinematic feel */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-4xl font-bold text-white opacity-30">{film.title}</div>
-          </div>
-        </div>
-      </div>
+          <Box fill align="center" justify="center" style={{ position: 'absolute' }}>
+            <Text size="xlarge" weight="bold" color="white" opacity="0.3">
+              {film.title}
+            </Text>
+          </Box>
+        </Box>
+      </Box>
 
-      <div>
-        <p className="text-sm">
-          <span className="font-bold">LUTTE JEUNESSE</span> a film by{' '}
-          <span className="font-bold">THIERRY DE PERETTI</span>. 2018. 55 min. A simple casting
-          process becomes a sociological inquiry into Corsican nationalism in this short film by the
+      <Box>
+        <Text>
+          <Text weight="bold">LUTTE JEUNESSE</Text> a film by{' '}
+          <Text weight="bold">THIERRY DE PERETTI</Text>. 2018. 55 min. A simple casting process
+          becomes a sociological inquiry into Corsican nationalism in this short film by the
           acclaimed French filmmaker.
-        </p>
-      </div>
+        </Text>
+      </Box>
 
-      <div className="mb-4 text-right">
-        <Button variant="text-underline">READ MORE</Button>
-      </div>
+      <Box align="end" margin={{ vertical: 'small' }}>
+        {/* <GrommetButton variant="text-underline" >READ MORE</GrommetButton> */}
+        <Button variant="text-underline" size="large" type="button">
+          READ MORE
+        </Button>
+      </Box>
 
-      <div className="prose mx-auto max-w-[500px]">{content}</div>
-    </div>
+      <Box
+        alignContent="center"
+        justify="center"
+        align="center"
+
+        // width="medium"
+        // margin={{ horizontal: 'auto' }}
+      >
+        {content}
+      </Box>
+    </Box>
   );
 }
