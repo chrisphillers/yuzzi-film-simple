@@ -1,5 +1,3 @@
-const config = {
-  plugins: ['@tailwindcss/postcss'],
-};
-
-export default config;
+// This file is intentionally empty
+// Removed Tailwind CSS configuration as per requirement
+export default {};

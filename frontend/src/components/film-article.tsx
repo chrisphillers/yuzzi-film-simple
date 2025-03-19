@@ -1,4 +1,5 @@
 import { type FilmArticle } from '@/lib/data';
+import { Box, Paragraph, Text } from 'grommet';
 
 interface FilmArticleContentProps {
   article: FilmArticle;
@@ -6,20 +7,34 @@ interface FilmArticleContentProps {
 
 export function FilmArticleContent({ article }: FilmArticleContentProps) {
   return (
-    <div className="mx-auto max-w-3xl">
+    <Box
+      // width="large"
+      // margin={{ horizontal: 'auto' }}
+      align="center"
+      margin={'large'}
+      // maxWidth="400px"
+    >
       {article.content.map((paragraph, index) => (
-        <p key={index} className="mb-4 text-base leading-relaxed">
+        <Paragraph
+          margin={'small'}
+          //  alignSelf='stretch'
+          key={index}
+          fill={true}
+
+          //  margin={{ bottom: 'medium' }}
+          // size="large"
+        >
           {paragraph}
-        </p>
+        </Paragraph>
       ))}
 
       {article.quotes.map((quote, index) => (
-        <div key={index} className="my-4 py-4">
-          <blockquote className="mb-2 font-medium">
+        <Box key={index} margin={{ vertical: 'medium' }} pad={{ vertical: 'medium' }}>
+          <Text weight="bold">
             "{quote.text} {quote.author}"
-          </blockquote>
-        </div>
+          </Text>
+        </Box>
       ))}
-    </div>
+    </Box>
   );
 }
