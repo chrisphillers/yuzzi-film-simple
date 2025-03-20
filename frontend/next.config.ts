@@ -7,4 +7,22 @@ const nextConfig: NextConfig = {
   },
 };
 
+//TODO Complete for SEO - think about LLMs
+
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/secret',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+    ];
+  },
+};
+
 export default nextConfig;
