@@ -12,7 +12,7 @@ export const Hero = ({ title }: { title: string }) => {
         paddingTop: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
         width: '100%', // Maintains responsiveness
         overflow: 'hidden',
-        backgroundColor: 'grey',
+        backgroundColor: 'var(--color-grey)',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -39,7 +39,7 @@ export const Hero = ({ title }: { title: string }) => {
               height: '0',
               borderTop: '40px solid transparent',
               borderBottom: '40px solid transparent',
-              borderLeft: '80px solid #2300ff', // Blue color for the play button
+              borderLeft: '80px solid var(--color-brand-primary)', // Using brandPrimary for play button color
               cursor: 'pointer',
             }}
           />

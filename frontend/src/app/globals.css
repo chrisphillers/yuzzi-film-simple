@@ -1,34 +1,10 @@
-/* Basic reset and global styles */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
+/* Browser-specific font smoothing */
 body {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
-}
-
-/* Will be replaced by Grommet's theming system */
-:root {
-  --background: white;
-  --foreground: #1a1a1a;
-}
-
-/* For CSS that falls outside Grommet components */
-.content-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
 }
