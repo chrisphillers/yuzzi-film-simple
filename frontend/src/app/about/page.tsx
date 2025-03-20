@@ -1,10 +1,9 @@
-import { Header } from 'grommet';
-import { CentreLayout } from '../layout';
+import { Header, Box } from 'grommet';
 
 export default async function About() {
   return (
-    <CentreLayout>
+    <Box>
       <Header>ABOUT US</Header>
-    </CentreLayout>
+    </Box>
   );
 }

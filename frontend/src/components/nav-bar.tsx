@@ -1,8 +1,18 @@
 'use client';
 import Link from 'next/link';
-import { Header, Box, Anchor, Nav, Button } from 'grommet';
+import {
+  Header,
+  Box,
+  Anchor,
+  Nav,
+  Button,
+  BoxExtendedProps,
+  ResponsiveContext,
+  Grid,
+} from 'grommet';
 import { Layer, Menu } from 'grommet-icons';
 import { useState } from 'react';
+import { Menu as MenuIcon } from 'grommet-icons';
 
 const navItems = [
   { name: 'JOURNAL', href: '/journal' },
@@ -11,15 +21,103 @@ const navItems = [
   { name: 'SHOP', href: '/shop' },
 ];
 
-export const NavBar2 = () => {
+const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
+  width: { max: '1000px' },
+  margin: 'auto',
+  pad: { horizontal: 'medium' },
+  fill: 'horizontal',
+};
+
+export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
+  const [showSidebar, setShowSidebar] = useState(false);
+  // const [activeItem, setActiveItem] = useState('Home');
+
   return (
-    <div>
-      <Nav direction="row" responsive>
-        {navItems.map((item) => {
-          return <Anchor key={item.name}>{item.name}</Anchor>;
-        })}
-      </Nav>
-    </div>
+    <Header
+      gridArea={gridArea}
+      width="full"
+      // margin="large"
+
+      {...rest}
+    >
+      <Box {...CONTENT_WIDTH_PROPS}>
+        <ResponsiveContext.Consumer>
+          {(size) => {
+            const isSmall = size === 'small';
+
+            return isSmall ? (
+              // Mobile layout
+              <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
+                <BrandLink align={'center'} />
+
+                <Box style={{ position: 'absolute', right: 0 }}>
+                  <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
+                </Box>
+              </Box>
+            ) : (
+              // Desktop layout
+              <Grid
+                fill="horizontal"
+                columns={['1/4', '2/4', '1/4']}
+                rows={['auto']}
+                areas={[['brand', 'menu', 'newsletter']]}
+                align="center"
+              >
+                <BrandLink align={'left'} />
+                <Box gridArea="menu" align="center">
+                  <Nav direction="row" gap="medium">
+                    {navItems.map((item) => (
+                      <Link key={item.name} href={item.href} passHref legacyBehavior>
+                        <Anchor size="medium" label={item.name} weight="light" />
+                      </Link>
+                    ))}
+                  </Nav>
+                </Box>
+
+                <Box gridArea="newsletter" align="end">
+                  <Anchor
+                    label="NEWSLETTER"
+                    size="medium"
+                    weight="light"
+                    onClick={() => alert('hi babes')}
+                  />
+                </Box>
+              </Grid>
+            );
+          }}
+        </ResponsiveContext.Consumer>
+      </Box>
+
+      {/* Sidebar overlay Need to Fix Grommet... */}
+      {showSidebar && <Layer>{/* ...sidebar content... */}</Layer>}
+    </Header>
+  );
+};
+
+const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
+  return (
+    <Box width="100%" align={align} gridArea="brand">
+      <Link href="/" passHref legacyBehavior>
+        <Anchor label="LE YUZZI" size="medium" onClick={() => console.log('CLICK')} />
+      </Link>
+    </Box>
+  );
+};
+
+export const FullLayer = () => {
+  const [showLayer, setShowLayer] = useState(false);
+
+  return (
+    <Box pad="small" fill background="dark-3" align="center" justify="center">
+      <Button primary color="accent-3" label="Show" onClick={() => setShowLayer(true)} />
+      {showLayer && (
+        <Layer full animation="fadeIn">
+          <Box fill background="light-4" align="center" justify="center">
+            <Button primary label="Close" onClick={() => setShowLayer(false)} />
+          </Box>
+        </Layer>
+      )}
+    </Box>
   );
 };
 
@@ -40,73 +138,6 @@ export const ModalMenu = () => {
           <Button label="close" onClick={() => setShow(false)} />
         </Layer>
       )}
-    </Box>
-  );
-};
-
-export const NavBar = () => {
-  return (
-    <Box pad={{ horizontal: 'medium' }}>
-      <Header
-        pad={{ vertical: 'medium' }}
-        width="large"
-        margin={{ horizontal: 'auto' }}
-        // gap={"large"}
-      >
-        {/* <Box> */}
-        <Link href="/" passHref legacyBehavior>
-          <Anchor
-            label="LE YUZZI"
-            weight="bold"
-            size="medium"
-            color="brand"
-            style={{
-              // letterSpacing: '-0.05em',
-              textDecoration: 'none',
-              // transition: 'opacity 0.2s',
-            }}
-            // hoverIndicator={{ opacity: 0.8 }}
-          />
-        </Link>
-
-        {/* </Box> */}
-
-        <Box direction="row" gap="small">
-          {navItems.map((item) => (
-            <Link key={item.name} href={item.href} passHref legacyBehavior>
-              <Anchor
-                label={item.name}
-                size="medium"
-                color="brand"
-                weight="light"
-                style={{
-                  letterSpacing: '0.05em',
-                  textDecoration: 'none',
-                  transition: 'opacity 0.2s',
-                }}
-                hoverIndicator={{ opacity: 0.8 }}
-              />
-            </Link>
-          ))}
-        </Box>
-
-        <Box>
-          <Link href="/newsletter" passHref legacyBehavior>
-            <Anchor
-              label="NEWSLETTER"
-              size="medium"
-              color="brand"
-              weight="light"
-              style={{
-                letterSpacing: '0.05em',
-                textDecoration: 'none',
-                transition: 'opacity 0.2s',
-              }}
-              hoverIndicator={{ opacity: 0.8 }}
-            />
-          </Link>
-        </Box>
-      </Header>
     </Box>
   );
 };

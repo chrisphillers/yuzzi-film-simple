@@ -37,7 +37,7 @@ const customTheme: ThemeType = {
   },
   anchor: {
     color: { dark: 'white', light: 'black' },
-
+    // size: { medium: { fontWeight: 3,  } },
     hover: {
       textDecoration: 'none',
       extend: 'color: blue;',

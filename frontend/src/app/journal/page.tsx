@@ -1,18 +1,18 @@
 import { Header } from 'grommet';
 import { SidebarLayout } from '../layout';
-import { Metadata } from 'next';
+// import { Metadata } from 'next';
 
 //TODO - dynamic metadata
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const product = await fetch(`https://.../${params.id}`).then((res) => res.json());
+// export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+//   const product = await fetch(`https://.../${params.id}`).then((res) => res.json());
 
-  return {
-    title: product.title,
-    openGraph: {
-      images: [`https://example.com/products/${params.id}.jpg`],
-    },
-  };
-}
+//   return {
+//     title: product.title,
+//     openGraph: {
+//       images: [`https://example.com/products/${params.id}.jpg`],
+//     },
+//   };
+// }
 
 // OR
 
