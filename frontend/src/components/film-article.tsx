@@ -5,15 +5,17 @@ interface FilmArticleContentProps {
   article: FilmArticle;
 }
 
+// const featureFilm = await getAllFilms();
+
 export function FilmArticleContent({ article }: FilmArticleContentProps) {
   return (
-    <Box align="center" margin={'large'}>
+    <>
+      {/* <Box align="center" margin={'large'}> */}
       {article.content.map((paragraph, index) => (
         <Paragraph margin={'small'} key={index} fill={true}>
           {paragraph}
         </Paragraph>
       ))}
-
       {article.quotes.map((quote, index) => (
         <Box key={index} margin={{ vertical: 'medium' }} pad={{ vertical: 'medium' }}>
           <Text weight="bold">
@@ -21,6 +23,7 @@ export function FilmArticleContent({ article }: FilmArticleContentProps) {
           </Text>
         </Box>
       ))}
-    </Box>
+      {/* </Box> */}
+    </>
   );
 }

@@ -5,14 +5,17 @@ import { useState } from 'react';
 
 export const Hero = ({ title }: { title: string }) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  console.log(title);
+
   return (
+    //TODO Suspense fix
+    // <Suspense fallback={<p>Loading feed...</p>}>
     <Box
       style={{
         position: 'relative',
         paddingTop: '56.25%', // 16:9 aspect ratio (9/16 = 0.5625)
-        width: '100%', // Maintains responsiveness
-        overflow: 'hidden',
-        backgroundColor: 'var(--color-grey)',
+        width: '100%',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -24,12 +27,15 @@ export const Hero = ({ title }: { title: string }) => {
           left: 0,
           width: '100%',
           height: '100%',
+          // TODO: To sort skeleton at some point
+          background: 'var(--color-grey)',
         }}
       >
         {/* Play button overlay */}
         {isHovered && (
           <Box
             style={{
+              cursor: 'pointer',
               position: 'absolute',
               top: '50%',
               left: '50%',
@@ -39,11 +45,11 @@ export const Hero = ({ title }: { title: string }) => {
               height: '0',
               borderTop: '40px solid transparent',
               borderBottom: '40px solid transparent',
-              borderLeft: '80px solid var(--color-brand-primary)', // Using brandPrimary for play button color
-              cursor: 'pointer',
+              borderLeft: '80px solid var(--color-brand-primary)',
             }}
           />
         )}
+
         {/* <Vimeo
           id={title}
           video="76979871"
@@ -55,5 +61,6 @@ export const Hero = ({ title }: { title: string }) => {
         /> */}
       </Box>
     </Box>
+    // </Suspense>
   );
 };
