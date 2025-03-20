@@ -16,6 +16,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@u-wave/react-vimeo": "^0.9.12",
     "babel-plugin-styled-components": "^2.1.4",
     "grommet": "^2.45.1",
     "grommet-icons": "^4.12.4",
