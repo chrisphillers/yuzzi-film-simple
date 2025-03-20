@@ -4,7 +4,7 @@ import { NavBar } from '@/components/nav-bar';
 import { Footer } from '@/components/footer';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Box, Page, Paragraph, PageContent } from 'grommet';
+import { Box, Grid } from 'grommet';
 
 export const metadata: Metadata = {
   title: 'Le Yuzzi',
@@ -41,27 +41,41 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider>
-          <NavBar />
-          {children}
-          <Footer />
+          <Grid
+            rows={['xxsmall', 'auto', 'xxsmall']}
+            columns={['auto']}
+            areas={[['header'], ['main'], ['footer']]}
+            gap="small"
+            tabIndex={0}
+          >
+            <NavBar gridArea="header" />
+            <Box gridArea="main" width="100%">
+              <main>{children}</main>
+            </Box>
+
+            <Footer gridArea="footer" />
+          </Grid>
         </ThemeProvider>
       </body>
     </html>
   );
 }
 
-export const CentreLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <Page kind="narrow">
-      <PageContent background="light-3">
-        <Paragraph>{children}</Paragraph>
-      </PageContent>
-    </Page>
-  );
-};
-
 export const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
-  return <Box>{children}</Box>;
+  return (
+    <Grid
+      columns={['medium', 'auto']}
+      areas={[['sidebar'], ['main']]}
+      rows={['auto']}
+      gap="small"
+      tabIndex={0}
+    >
+      {/* TODO add grid naming to lower components? Not a solution below */}
+
+      {/* <Box gridArea="sidebar">{children}</Box> */}
+      <Box gridArea="main">{children}</Box>
+    </Grid>
+  );
 };
 
 // Layouts

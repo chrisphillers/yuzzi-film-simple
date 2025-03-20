@@ -6,9 +6,10 @@ const navItems = [
   { name: 'FACEBOOK', href: '/about' },
 ];
 
-export const Footer = () => {
+export const Footer = ({ gridArea, ...rest }: { gridArea: string }) => {
   return (
     <GrommetFooter
+      gridArea={gridArea}
       background={{
         light: 'black',
         dark: 'white',
@@ -17,6 +18,7 @@ export const Footer = () => {
       direction="row"
       justify="center"
       margin={{ top: 'medium' }}
+      {...rest}
     >
       <Box direction="row" gap="medium">
         {navItems.map((item) => (
