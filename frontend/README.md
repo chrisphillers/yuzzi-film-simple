@@ -32,3 +32,5 @@ https://dev.to/rajeshroyal/page-not-found-error-on-netlify-reactjs-react-router-
 Using Grommet and styled components with Next to avoid style flashing
 
 wrap Grommet (and all inside) with the StyleSheetManager component (see in ThemeProvider)
+
+and install babel-plugin-styled-components

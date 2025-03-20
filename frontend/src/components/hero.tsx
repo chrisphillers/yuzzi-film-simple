@@ -1,5 +1,5 @@
 'use client';
-import Vimeo from '@u-wave/react-vimeo';
+// import Vimeo from '@u-wave/react-vimeo';
 import { Box } from 'grommet';
 import { useState } from 'react';
 
@@ -44,7 +44,7 @@ export const Hero = ({ title }: { title: string }) => {
             }}
           />
         )}
-        <Vimeo
+        {/* <Vimeo
           id={title}
           video="76979871"
           autoplay={true}
@@ -52,7 +52,7 @@ export const Hero = ({ title }: { title: string }) => {
           loop={true}
           controls={false}
           responsive={true}
-        />
+        /> */}
       </Box>
     </Box>
   );
