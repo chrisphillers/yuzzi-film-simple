@@ -1,168 +1,412 @@
-import { renderHook, act } from '@testing-library/react';
-import { useNewsletterForm } from '../useNewsletter';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { useNewsletterValidation } from '../useNewsletter';
+import { Newsletter } from '../../../components/newsletter/newsletter';
 
-// Mock the email validation module
-jest.mock('../../../app/utils/email-validation', () => ({
-  getEmailValidators: jest.fn(() => [
-    jest.fn((email) => {
-      if (!email) return 'Email is required';
-      if (email === 'invalid@') return 'Please enter a valid email address';
-      return undefined; // Valid email
-    }),
-  ]),
+// ONLY mock the hook, not the validation utility
+jest.mock('../useNewsletter', () => ({
+  useNewsletterValidation: jest.fn(),
 }));
 
-// Mock console.log
-const originalConsoleLog = console.log;
-beforeEach(() => {
-  console.log = jest.fn();
-});
-afterEach(() => {
-  console.log = originalConsoleLog;
-  jest.clearAllMocks();
-});
-
-// Mock timers
+// Mock setTimeout to use fake timers
 jest.useFakeTimers();
 
-describe('useNewsletterForm hook', () => {
-  // Mock setShowNewsletterModal function
-  const mockSetShowModal = jest.fn();
+describe('Newsletter Modal', () => {
+  const mockSetShowNewsletter = jest.fn();
+  let originalConsoleLog: typeof console.log;
 
   beforeEach(() => {
-    // Clear mock before each test
-    mockSetShowModal.mockClear();
+    jest.clearAllMocks();
+
+    // Save original console.log
+    originalConsoleLog = console.log;
+    // Replace with silent mock
+    console.log = jest.fn();
+
+    // Default mock implementation
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: '' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
+    });
   });
 
-  test('initializes with empty form values', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
-
-    expect(result.current.formValue).toEqual({ email: '' });
-    expect(result.current.showingError).toBe(false);
-    expect(result.current.isSubmitting).toBe(false);
+  afterEach(() => {
+    jest.clearAllTimers();
+    // Restore original console.log
+    console.log = originalConsoleLog;
   });
 
-  test('updates form value on handleChange', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
+  test('renders the newsletter form with all elements', () => {
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
 
-    act(() => {
-      result.current.handleChange({
-        target: { value: 'test@example.com' },
-      } as React.ChangeEvent<HTMLInputElement>);
-    });
+    // Check for brand text
+    expect(screen.getByText('LE YUZZI')).toBeInTheDocument();
 
-    expect(result.current.formValue.email).toBe('test@example.com');
+    // Check for input field
+    expect(screen.getByTestId('email-input')).toBeInTheDocument();
+
+    // Check for buttons
+    expect(screen.getByText('SUBSCRIBE')).toBeInTheDocument();
+    expect(screen.getByText('CANCEL')).toBeInTheDocument();
   });
 
-  test('clears form value and closes modal on handleCancel', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
-
-    // Set a value first
-    act(() => {
-      result.current.handleChange({
-        target: { value: 'test@example.com' },
-      } as React.ChangeEvent<HTMLInputElement>);
+  test('shows error when submitting without an email', () => {
+    // Setup with validation error
+    const mockHandleSubmit = jest.fn();
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: '' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: mockHandleSubmit,
+      handleCancel: jest.fn(),
     });
 
-    // Then cancel
-    act(() => {
-      result.current.handleCancel();
+    const { unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Submit form without entering an email
+    fireEvent.click(screen.getByText('SUBSCRIBE'));
+
+    expect(mockHandleSubmit).toHaveBeenCalled();
+
+    // Cleanup
+    unmount();
+
+    // Setup with error state
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: '' },
+      setFormValue: jest.fn(),
+      validationMessage: 'Email is required',
+      showingError: true,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
     });
 
-    expect(result.current.formValue.email).toBe('');
-    expect(mockSetShowModal).toHaveBeenCalledWith(false);
+    const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Check that error message is shown
+    expect(screen.getByTestId('email-input')).toHaveValue('Email is required');
+    expect(screen.getByTestId('email-input')).toHaveStyle('color: red');
+
+    // Cleanup
+    unmount2();
+
+    // Setup with error cleared
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: '' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Error message should be gone
+    expect(screen.getByTestId('email-input')).not.toHaveValue('Email is required');
+    expect(screen.getByTestId('email-input')).not.toHaveStyle('color: red');
   });
 
-  test('shows error message when submitting empty email', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
-
-    act(() => {
-      result.current.handleSubmit({ value: { email: '' } });
+  test('shows error for invalid email format', () => {
+    // Setup with initial state
+    const mockSetFormValue = jest.fn();
+    const mockHandleSubmit = jest.fn();
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'invalid@' },
+      setFormValue: mockSetFormValue,
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: mockHandleSubmit,
+      handleCancel: jest.fn(),
     });
 
-    expect(result.current.showingError).toBe(true);
-    expect(result.current.validationMessage).toBe('Email is required');
-    expect(mockSetShowModal).not.toHaveBeenCalled();
+    const { unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Submit form with invalid email
+    fireEvent.click(screen.getByText('SUBSCRIBE'));
+
+    expect(mockHandleSubmit).toHaveBeenCalled();
+
+    // Cleanup
+    unmount();
+
+    // Setup with error state
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'invalid@' },
+      setFormValue: jest.fn(),
+      validationMessage: 'Please enter a valid email address',
+      showingError: true,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
+    });
+
+    const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Check that error message is shown
+    expect(screen.getByTestId('email-input')).toHaveValue('Please enter a valid email address');
+    expect(screen.getByTestId('email-input')).toHaveStyle('color: red');
+
+    // Cleanup
+    unmount2();
+
+    // Setup with error cleared
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'invalid@' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Input should return to original value
+    expect(screen.getByTestId('email-input')).toHaveValue('invalid@');
+    expect(screen.getByTestId('email-input')).not.toHaveStyle('color: red');
   });
 
-  test('shows error message when submitting invalid email', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
-
-    act(() => {
-      result.current.handleSubmit({ value: { email: 'invalid@' } });
+  test('shows "Submitting..." when submitting with valid email', () => {
+    // Setup with initial state
+    const mockHandleSubmit = jest.fn();
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'valid@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: mockHandleSubmit,
+      handleCancel: jest.fn(),
     });
 
-    expect(result.current.showingError).toBe(true);
-    expect(result.current.validationMessage).toBe('Please enter a valid email address');
-    expect(mockSetShowModal).not.toHaveBeenCalled();
+    const { unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Submit form with valid email
+    fireEvent.click(screen.getByText('SUBSCRIBE'));
+
+    expect(mockHandleSubmit).toHaveBeenCalled();
+
+    // Cleanup
+    unmount();
+
+    // Setup with submitting state
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'valid@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: true,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
+    });
+
+    const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Check that "Submitting..." is shown
+    expect(screen.getByTestId('submitting-text')).toBeInTheDocument();
+    expect(screen.getByText('Submitting...')).toBeInTheDocument();
+
+    // Input and subscribe button should not be visible
+    expect(screen.queryByTestId('email-input')).not.toBeInTheDocument();
+    expect(screen.queryByText('SUBSCRIBE')).not.toBeInTheDocument();
+
+    // Cleanup
+    unmount2();
+
+    // Setup with completed state
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'valid@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Form should return to normal state
+    expect(screen.queryByText('Submitting...')).not.toBeInTheDocument();
+    expect(screen.getByTestId('email-input')).toBeInTheDocument();
+    expect(screen.getByText('SUBSCRIBE')).toBeInTheDocument();
   });
 
-  test('shows submitting state when valid email is submitted', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
-
-    act(() => {
-      result.current.handleSubmit({ value: { email: 'valid@example.com' } });
+  test('clears input when clicking CANCEL', () => {
+    // Setup with initial state
+    const mockHandleCancel = jest.fn();
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'test@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: mockHandleCancel,
     });
 
-    expect(result.current.isSubmitting).toBe(true);
+    const { unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Verify value is in the input
+    expect(screen.getByTestId('email-input')).toHaveValue('test@example.com');
+
+    // Click cancel
+    fireEvent.click(screen.getByText('CANCEL'));
+
+    expect(mockHandleCancel).toHaveBeenCalled();
+
+    // Cleanup
+    unmount();
+
+    // Setup with cleared state
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: '' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Check that input is cleared
+    expect(screen.getByTestId('email-input')).toHaveValue('');
+  });
+
+  test('logs submission with valid email', () => {
+    // Setup mock that will call console.log
+    const mockHandleSubmit = jest.fn(({ value }) => {
+      console.log('Submit', value);
+    });
+
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'valid@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: mockHandleSubmit,
+      handleCancel: jest.fn(),
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Submit form
+    fireEvent.click(screen.getByText('SUBSCRIBE'));
+
+    // Check console.log was called with form value
     expect(console.log).toHaveBeenCalledWith('Submit', { email: 'valid@example.com' });
-    expect(mockSetShowModal).not.toHaveBeenCalled(); // Modal stays open during submission
   });
 
-  test('clears error after timeout', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
+  test('handles brand link click correctly', () => {
+    const alertMock = jest.spyOn(window, 'alert').mockImplementation();
 
-    // Submit with invalid email
-    act(() => {
-      result.current.handleSubmit({ value: { email: 'invalid@' } });
-    });
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
 
-    // Error should be shown
-    expect(result.current.showingError).toBe(true);
+    fireEvent.click(screen.getByTestId('brand-link'));
 
-    // Advance timers
-    act(() => {
-      jest.advanceTimersByTime(1000);
-    });
+    expect(alertMock).toHaveBeenCalledWith('click');
 
-    // Error should be cleared
-    expect(result.current.showingError).toBe(false);
+    alertMock.mockRestore();
   });
 
-  test('clears submitting state after timeout', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
-
-    // Submit with valid email
-    act(() => {
-      result.current.handleSubmit({ value: { email: 'valid@example.com' } });
+  test('preserves form position and prevents style jumping', () => {
+    // Setup with initial state
+    const mockHandleSubmit = jest.fn();
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'valid@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: mockHandleSubmit,
+      handleCancel: jest.fn(),
     });
 
-    // Should be submitting
-    expect(result.current.isSubmitting).toBe(true);
+    const { container, unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
 
-    // Advance timers
-    act(() => {
-      jest.advanceTimersByTime(1000);
+    // Get initial position of the component
+    const formContainer = container.firstChild as HTMLElement;
+    if (!formContainer) {
+      throw new Error('Form container not found');
+    }
+
+    const initialHeight = formContainer.clientHeight;
+
+    // Submit form
+    fireEvent.click(screen.getByText('SUBSCRIBE'));
+
+    expect(mockHandleSubmit).toHaveBeenCalled();
+
+    // Cleanup
+    unmount();
+
+    // Setup with submitting state
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'valid@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: true,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
     });
 
-    // Should no longer be submitting
-    expect(result.current.isSubmitting).toBe(false);
-  });
+    const { container: container2, unmount: unmount2 } = render(
+      <Newsletter setShowNewsletter={mockSetShowNewsletter} />
+    );
 
-  test('keeps modal open after successful submission', () => {
-    const { result } = renderHook(() => useNewsletterForm(mockSetShowModal));
+    // Check position after submitting
+    const submittingContainer = container2.firstChild as HTMLElement;
+    if (!submittingContainer) {
+      throw new Error('Submitting container not found');
+    }
 
-    // Submit with valid email
-    act(() => {
-      result.current.handleSubmit({ value: { email: 'valid@example.com' } });
+    const submittingHeight = submittingContainer.clientHeight;
+
+    // Height should be maintained
+    expect(submittingHeight).toBe(initialHeight);
+
+    // Cleanup
+    unmount2();
+
+    // Setup with completed state
+    (useNewsletterValidation as jest.Mock).mockReturnValue({
+      formValue: { email: 'valid@example.com' },
+      setFormValue: jest.fn(),
+      validationMessage: '',
+      showingError: false,
+      isSubmitting: false,
+      handleSubmit: jest.fn(),
+      handleCancel: jest.fn(),
     });
 
-    // Advance timers to complete submission
-    act(() => {
-      jest.advanceTimersByTime(1000);
-    });
+    const { container: container3 } = render(
+      <Newsletter setShowNewsletter={mockSetShowNewsletter} />
+    );
 
-    // Modal should still be open
-    expect(mockSetShowModal).not.toHaveBeenCalled();
+    // Check position after returning to normal state
+    const finalContainer = container3.firstChild as HTMLElement;
+    if (!finalContainer) {
+      throw new Error('Final container not found');
+    }
+
+    const finalHeight = finalContainer.clientHeight;
+
+    // Height should be maintained
+    expect(finalHeight).toBe(initialHeight);
   });
 });

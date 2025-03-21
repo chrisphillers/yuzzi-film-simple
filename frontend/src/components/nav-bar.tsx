@@ -13,6 +13,7 @@ import {
 import { Layer, Menu } from 'grommet-icons';
 import { useState } from 'react';
 import { Menu as MenuIcon } from 'grommet-icons';
+import { Newsletter } from './newsletter/newsletter';
 
 const navItems = [
   { name: 'JOURNAL', href: '/journal' },
@@ -22,21 +23,15 @@ const navItems = [
 ];
 
 const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
-  width: { max: '1000px' },
+  width: { max: '1200px' },
   margin: 'auto',
   pad: { horizontal: 'medium' },
   fill: 'horizontal',
 };
 
-export const NavBar = ({
-  gridArea,
-  setShowNewsletterModal,
-  ...rest
-}: {
-  gridArea?: string;
-  setShowNewsletterModal: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  const [showSidebar, setShowSidebar] = useState(false);
+export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
+  const [showNewsletter, setShowNewsletter] = useState<boolean>(false);
+  const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
   return (
     <Header gridArea={gridArea} width="full" {...rest}>
@@ -45,10 +40,12 @@ export const NavBar = ({
           {(size) => {
             const isSmall = size === 'small';
 
-            //TODO Reactor this - this hides the newsletter if on non desktopview
+            // In small screens, ensure newsletter is hidden
+            if (isSmall && showNewsletter) {
+              setShowNewsletter(false);
+            }
 
             if (isSmall) {
-              setShowNewsletterModal(false);
               return (
                 // Mobile layout
                 <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
@@ -61,36 +58,44 @@ export const NavBar = ({
               );
             }
 
-            return (
-              // Desktop layout
-              <Grid
-                fill="horizontal"
-                columns={['1/4', '2/4', '1/4']}
-                rows={['auto']}
-                areas={[['brand', 'menu', 'newsletter']]}
-                align="center"
-              >
-                <BrandLink align={'left'} />
-                <Box gridArea="menu" align="center">
-                  <Nav direction="row" gap="medium">
-                    {navItems.map((item) => (
-                      <Link key={item.name} href={item.href} passHref legacyBehavior>
-                        <Anchor size="medium" label={item.name} weight="light" />
-                      </Link>
-                    ))}
-                  </Nav>
-                </Box>
+            if (showNewsletter) {
+              return <Newsletter setShowNewsletter={setShowNewsletter} />;
+            }
 
-                <Box gridArea="newsletter" align="end">
-                  <Anchor
-                    label="NEWSLETTER"
-                    size="medium"
-                    weight="light"
-                    onClick={() => setShowNewsletterModal(true)}
-                  />
-                </Box>
-              </Grid>
-            );
+            if (!showNewsletter) {
+              return (
+                // Desktop layout
+                <Grid
+                  fill="horizontal"
+                  columns={['1/4', '2/4', '1/4']}
+                  rows={['auto']}
+                  areas={[['brand', 'menu', 'newsletter']]}
+                  align="center"
+                >
+                  <BrandLink align={'left'} />
+                  <Box gridArea="menu" align="center">
+                    <Nav direction="row" gap="medium">
+                      {navItems.map((item) => (
+                        <Link key={item.name} href={item.href} passHref legacyBehavior>
+                          <Anchor size="medium" label={item.name} weight="light" />
+                        </Link>
+                      ))}
+                    </Nav>
+                  </Box>
+
+                  <Box gridArea="newsletter" align="end">
+                    <Anchor
+                      label="NEWSLETTER"
+                      size="medium"
+                      weight="light"
+                      onClick={() => setShowNewsletter(true)}
+                    />
+                  </Box>
+                </Grid>
+              );
+            }
+
+            return null;
           }}
         </ResponsiveContext.Consumer>
       </Box>
@@ -103,12 +108,7 @@ export const NavBar = ({
 
 const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
   return (
-    <Box
-      width="100%"
-      align={align}
-      gridArea="brand"
-      // style={{ zIndex: 3 }}
-    >
+    <Box width="100%" align={align} gridArea="brand">
       <Link href="/" passHref legacyBehavior>
         <Anchor label="LE YUZZI" size="medium" onClick={() => console.log('CLICK')} />
       </Link>
