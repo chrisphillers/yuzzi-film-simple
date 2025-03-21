@@ -26,8 +26,6 @@ const customTheme: ThemeType = {
       grey: colorDefinitions.grey,
       'brand-primary': colorDefinitions.brandPrimary,
       'brand-secondary': colorDefinitions.brandSecondary,
-      background: colorDefinitions.background,
-      'background-light': colorDefinitions.backgroundLight,
     },
     font: {
       family: 'var(--font-geist-sans)',
