@@ -1,9 +1,9 @@
 import { getFeatureFilm } from '@/lib/data';
-import { Box, Text, BoxExtendedProps, Anchor, Paragraph } from 'grommet';
+import { Box, Text, BoxExtendedProps, Paragraph, Button } from 'grommet';
 import { Hero } from '../components/hero';
 
 const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
-  width: { max: '1000px' },
+  width: { max: '1200px' },
   margin: 'auto',
   pad: { horizontal: 'medium' },
   fill: 'horizontal',
@@ -29,16 +29,18 @@ export default async function Home() {
       </Paragraph>
 
       <Box align="end" margin={{ vertical: 'small' }}>
-        {/* TODO: Fix Link issue */}
-        {/* <Link href={'/somewhere'} passHref legacyBehavior> */}
-        <Anchor
-          size="medium"
-          weight={'light'}
-          hover={{ textDecoration: 'underline', color: 'brand' }}
+        <Button
+          plain
+          hover={{ color: 'blue' }}
+          style={{
+            textDecoration: 'underline',
+            size: '24px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+          }}
         >
           READ MORE
-        </Anchor>
-        {/* </Link> */}
+        </Button>
       </Box>
       <Box alignContent="center" justify="center" align="center">
         <Paragraph fill={true} margin={{ horizontal: 'xlarge' }}>
