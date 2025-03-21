@@ -1,83 +1,84 @@
-'use client';
-import { useState, useCallback, useEffect } from 'react';
-import { getEmailValidators } from '../utils/email-validation';
-import { FormSubmitEvent, NewsletterFormValue } from '../types/newsletter';
+import { useState, useCallback } from 'react';
+import { getEmailValidators } from '../../app/utils/email-validation';
 
-/**
- * Custom hook to manage newsletter form state and logic
- * Separates business logic from UI components
- */
-export const useNewsletterForm = (
-  setShowNewsletterModal: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-  const [formValue, setFormValue] = useState<NewsletterFormValue>({ email: '' });
-  const [validationMessage, setValidationMessage] = useState('');
-  const [showingError, setShowingError] = useState(false);
-  const [originalValue, setOriginalValue] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+interface NewsletterFormState {
+  email: string;
+}
 
-  // Reset error message after timeout
-  useEffect(() => {
-    if (showingError) {
-      const timer = setTimeout(() => {
-        setShowingError(false);
+interface UseNewsletterValidationProps {
+  onCancel: () => void;
+}
 
-        // Restore original value if needed
-        if (validationMessage) {
-          setFormValue((prev) => ({ ...prev, email: originalValue }));
-        }
+interface UseNewsletterValidationReturn {
+  formValue: NewsletterFormState;
+  setFormValue: React.Dispatch<React.SetStateAction<NewsletterFormState>>;
+  validationMessage: string;
+  showingError: boolean;
+  isSubmitting: boolean;
+  handleSubmit: ({ value }: { value: NewsletterFormState }) => void;
+  handleCancel: () => void;
+}
+
+export const useNewsletterValidation = ({
+  onCancel,
+}: UseNewsletterValidationProps): UseNewsletterValidationReturn => {
+  const [formValue, setFormValue] = useState<NewsletterFormState>({ email: '' });
+  const [validationMessage, setValidationMessage] = useState<string>('');
+  const [showingError, setShowingError] = useState<boolean>(false);
+  const [originalValue, setOriginalValue] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const handleSubmit = useCallback(
+    ({ value }: { value: NewsletterFormState }) => {
+      // Validate email first
+      const emailValidator = getEmailValidators()[0];
+      const validationResult = emailValidator(value.email);
+
+      if (validationResult) {
+        // Store original value
+        setOriginalValue(value.email);
+        // Show error in input
+        setValidationMessage(validationResult);
+        setShowingError(true);
+
+        // Reset after 1 second
+        setTimeout(() => {
+          setShowingError(false);
+          // Restore original value if needed
+          if (validationMessage) {
+            setFormValue((prev) => ({ ...prev, email: originalValue }));
+          }
+        }, 1000);
+
+        return;
+      }
+
+      // Valid submission
+      console.log('Submit', value);
+
+      // Show submitting state
+      setIsSubmitting(true);
+
+      // Simulate submission process (replace with actual submission)
+      setTimeout(() => {
+        setIsSubmitting(false);
+        // You could reset the form here or show a success message
       }, 1000);
+    },
+    [validationMessage, originalValue]
+  );
 
-      return () => clearTimeout(timer);
-    }
-  }, [showingError, validationMessage, originalValue]);
-
-  // Handle form input changes
-  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setFormValue((prev) => ({ ...prev, email: value }));
-  }, []);
-
-  // Handle form submission
-  const handleSubmit = useCallback(({ value }: FormSubmitEvent) => {
-    // Validate email
-    const emailValidator = getEmailValidators()[0];
-    const validationResult = emailValidator(value.email);
-
-    if (validationResult) {
-      // Store original value and show error
-      setOriginalValue(value.email);
-      setValidationMessage(validationResult);
-      setShowingError(true);
-      return;
-    }
-
-    // Valid submission
-    console.log('Submit', value);
-    setIsSubmitting(true);
-
-    // Simulate submission (replace with actual API call)
-    const timer = setTimeout(() => {
-      setIsSubmitting(false);
-      setFormValue({ email: '' });
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Handle cancel button click
   const handleCancel = useCallback(() => {
     setFormValue({ email: '' });
-    setShowNewsletterModal(false);
-  }, [setShowNewsletterModal]);
+    onCancel();
+  }, [onCancel]);
 
   return {
     formValue,
     setFormValue,
-    showingError,
     validationMessage,
+    showingError,
     isSubmitting,
-    handleChange,
     handleSubmit,
     handleCancel,
   };
