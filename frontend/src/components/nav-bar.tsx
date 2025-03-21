@@ -11,7 +11,7 @@ import {
   Grid,
 } from 'grommet';
 import { Layer, Menu } from 'grommet-icons';
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Menu as MenuIcon } from 'grommet-icons';
 import { Newsletter } from './newsletter/newsletter';
 
@@ -33,74 +33,62 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
   const [showNewsletter, setShowNewsletter] = useState<boolean>(false);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
+  // Size from Grommet context
+  const size = useContext(ResponsiveContext);
+
+  useEffect(() => {
+    const isSmall = size === 'small';
+    if (isSmall && showNewsletter) {
+      setShowNewsletter(false);
+    }
+  }, [size, showNewsletter]);
+
+  const isSmall = size === 'small';
+
   return (
     <Header gridArea={gridArea} width="full" {...rest}>
       <Box {...CONTENT_WIDTH_PROPS}>
-        <ResponsiveContext.Consumer>
-          {(size) => {
-            const isSmall = size === 'small';
-
-            // In small screens, ensure newsletter is hidden
-            if (isSmall && showNewsletter) {
-              setShowNewsletter(false);
-            }
-
-            if (isSmall) {
-              return (
-                // Mobile layout
-                <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
-                  <BrandLink align={'center'} />
-
-                  <Box style={{ position: 'absolute', right: 0 }}>
-                    <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
-                  </Box>
-                </Box>
-              );
-            }
-
-            if (showNewsletter) {
-              return <Newsletter setShowNewsletter={setShowNewsletter} />;
-            }
-
-            if (!showNewsletter) {
-              return (
-                // Desktop layout
-                <Grid
-                  fill="horizontal"
-                  columns={['1/4', '2/4', '1/4']}
-                  rows={['auto']}
-                  areas={[['brand', 'menu', 'newsletter']]}
-                  align="center"
-                >
-                  <BrandLink align={'left'} />
-                  <Box gridArea="menu" align="center">
-                    <Nav direction="row" gap="medium">
-                      {navItems.map((item) => (
-                        <Link key={item.name} href={item.href} passHref legacyBehavior>
-                          <Anchor size="medium" label={item.name} weight="light" />
-                        </Link>
-                      ))}
-                    </Nav>
-                  </Box>
-
-                  <Box gridArea="newsletter" align="end">
-                    <Anchor
-                      label="NEWSLETTER"
-                      size="medium"
-                      weight="light"
-                      onClick={() => setShowNewsletter(true)}
-                    />
-                  </Box>
-                </Grid>
-              );
-            }
-
-            return null;
-          }}
-        </ResponsiveContext.Consumer>
+        {isSmall ? (
+          // Mobile layout
+          <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
+            <BrandLink align={'center'} />
+            <Box style={{ position: 'absolute', right: 0 }}>
+              <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
+            </Box>
+          </Box>
+        ) : showNewsletter ? (
+          <Newsletter setShowNewsletter={setShowNewsletter} />
+        ) : (
+          // Desktop layout
+          <Grid
+            fill="horizontal"
+            columns={['1/4', '2/4', '1/4']}
+            rows={['auto']}
+            areas={[['brand', 'menu', 'newsletter']]}
+            align="center"
+          >
+            <BrandLink align={'left'} />
+            <Box gridArea="menu" align="center">
+              <Nav direction="row" gap="medium">
+                {navItems.map((item) => (
+                  <Link key={item.name} href={item.href} passHref legacyBehavior>
+                    <Anchor size="medium" label={item.name} weight="light" />
+                  </Link>
+                ))}
+              </Nav>
+            </Box>
+            <Box gridArea="newsletter" align="end">
+              <Anchor
+                label="NEWSLETTER"
+                size="medium"
+                weight="light"
+                onClick={() => setShowNewsletter(true)}
+              />
+            </Box>
+          </Grid>
+        )}
       </Box>
 
-      {/* Sidebar overlay Need to Fix Grommet... */}
       {showSidebar && <Layer>{/* ...sidebar content... */}</Layer>}
     </Header>
   );
