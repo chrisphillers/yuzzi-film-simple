@@ -52,7 +52,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Box gridArea="main" width="100%">
               <main>{children}</main>
             </Box>
-
             <Footer gridArea="footer" />
           </Grid>
         </ThemeProvider>
