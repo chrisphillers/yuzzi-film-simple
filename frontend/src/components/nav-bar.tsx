@@ -6,11 +6,12 @@ import {
   Anchor,
   Nav,
   Button,
+  Heading,
   BoxExtendedProps,
   ResponsiveContext,
   Grid,
 } from 'grommet';
-import { Layer, Menu } from 'grommet-icons';
+import { Close } from 'grommet-icons';
 import { useState, useEffect, useContext } from 'react';
 import { Menu as MenuIcon } from 'grommet-icons';
 import { Newsletter } from './newsletter/newsletter';
@@ -20,6 +21,11 @@ const navItems = [
   { name: 'ARCHIVES', href: '/archives' },
   { name: 'ABOUT', href: '/about' },
   { name: 'SHOP', href: '/shop' },
+];
+
+const socialItems = [
+  { name: 'INSTAGRAM', href: '#' },
+  { name: 'ONLYFANS', href: '#' },
 ];
 
 const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
@@ -43,6 +49,11 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
     }
   }, [size, showNewsletter]);
 
+  useEffect(() => {
+    // on rerender close
+    setShowSidebar(false);
+  }, []);
+
   const isSmall = size === 'small';
 
   return (
@@ -50,12 +61,15 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
       <Box {...CONTENT_WIDTH_PROPS}>
         {isSmall ? (
           // Mobile layout
-          <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
-            <BrandLink align={'center'} />
-            <Box style={{ position: 'absolute', right: 0 }}>
-              <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
+          <>
+            {showSidebar && <MobileNav onClose={() => setShowSidebar(false)}></MobileNav>}
+            <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
+              <BrandLink align={'center'} />
+              <Box style={{ position: 'absolute', right: 0 }}>
+                <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
+              </Box>
             </Box>
-          </Box>
+          </>
         ) : showNewsletter ? (
           <Newsletter setShowNewsletter={setShowNewsletter} />
         ) : (
@@ -88,8 +102,6 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
           </Grid>
         )}
       </Box>
-
-      {showSidebar && <Layer>{/* ...sidebar content... */}</Layer>}
     </Header>
   );
 };
@@ -104,40 +116,73 @@ const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
   );
 };
 
-export const FullLayer = () => {
-  const [showLayer, setShowLayer] = useState(false);
+interface MobileNavProps {
+  onClose: () => void;
+}
 
+const MobileNav: React.FC<MobileNavProps> = ({ onClose }) => {
   return (
-    <Box pad="small" fill background="dark-3" align="center" justify="center">
-      <Button primary color="accent-3" label="Show" onClick={() => setShowLayer(true)} />
-      {showLayer && (
-        <Layer full animation="fadeIn">
-          <Box fill background="light-4" align="center" justify="center">
-            <Button primary label="Close" onClick={() => setShowLayer(false)} />
+    // TODO: Pref use Grommet Layer here - however it looks like there are some issues with React 19 for now (untested beta)
+    <Box
+      style={{
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+        backgroundColor: 'black',
+        zIndex: 2,
+      }}
+    >
+      <Box fill direction="column" pad={{ horizontal: 'medium', vertical: 'medium' }} gap="large">
+        <Box direction="row" justify="between" align="center" pad={{ bottom: 'medium' }}>
+          <Box flex />
+          <Heading level={2} margin="none" color="white" textAlign="center">
+            LE YUZZI
+          </Heading>
+          <Box flex align="end">
+            <Button plain icon={<Close color="white" size="medium" />} onClick={onClose} />
           </Box>
-        </Layer>
-      )}
-    </Box>
-  );
-};
+        </Box>
+        {/* Menu Section*/}
+        <Nav gap="medium">
+          {navItems.map((menuItem) => {
+            return (
+              <Anchor
+                href={menuItem.href}
+                key={menuItem.name}
+                color="white"
+                weight="medium"
+                size="medium"
+              >
+                {menuItem.name}
+              </Anchor>
+            );
+          })}
+        </Nav>
+        {/* Social Section*/}
+        <Box margin={{ top: 'xlarge' }}>
+          <Nav gap="medium">
+            {socialItems.map((socialItem) => {
+              return (
+                <Anchor
+                  key={socialItem.name}
+                  href={socialItem.href}
+                  color="white"
+                  weight="medium"
+                  size="medium"
+                >
+                  {socialItem.name}
+                </Anchor>
+              );
+            })}
 
-export const ModalMenu = () => {
-  const [show, setShow] = useState(false);
-  return (
-    <Box height="full" color="hotpink">
-      <Menu onClick={() => setShow(true)} />
-      Hello
-      {/* <Button label="show" onClick={() => setShow(true)} /> */}
-      {show && (
-        <Layer
-          animation="slide"
-
-          // onEsc={() => setShow(false)}
-          // onClickOutside={() => setShow(false)}
-        >
-          <Button label="close" onClick={() => setShow(false)} />
-        </Layer>
-      )}
+            <Anchor href="#" color="white" weight="bold" size="medium">
+              NEWSLETTER - TBD
+            </Anchor>
+          </Nav>
+        </Box>
+      </Box>
     </Box>
   );
 };
