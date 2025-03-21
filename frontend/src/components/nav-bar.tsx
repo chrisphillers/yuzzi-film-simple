@@ -125,9 +125,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ onClose }) => {
     // TODO: Pref use Grommet Layer here - however it looks like there are some issues with React 19 for now (untested beta)
     <Box
       style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
+        position: 'fixed',
+        width: '100vw',
+        height: '100vh',
         top: 0,
         left: 0,
         backgroundColor: 'black',
