@@ -20,10 +20,22 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     );
   });
 
+  // const [dark, darkToggle] = useState(true);
+
   // Client-side rendering
   if (typeof window !== 'undefined') {
     return (
-      <Grommet theme={grommetTheme} full themeMode="light">
+      <Grommet theme={grommetTheme} full themeMode="dark">
+        {/* <Button
+          style={{ zIndex: 4, position: 'absolute', top: 0, left: 0 }}
+          onClick={() => {
+            darkToggle(!dark);
+            console.log('nowindow');
+          }}
+        >
+          DARKSIDE
+        </Button>
+        {dark ? 'its dark' : 'itslightt'} */}
         {children}
       </Grommet>
     );
@@ -32,7 +44,16 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // Server-side rendering
   return (
     <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
-      <Grommet theme={grommetTheme} full themeMode="light">
+      <Grommet theme={grommetTheme} full themeMode="dark">
+        {/* <Button
+          style={{ zIndex: 4, position: 'absolute', top: 0, left: 0 }}
+          onClick={() => {
+            darkToggle(!dark);
+            console.log('window');
+          }}
+        >
+          DARKSIDE
+        </Button> */}
         {children}
       </Grommet>
     </StyleSheetManager>
