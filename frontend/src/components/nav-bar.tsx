@@ -28,33 +28,40 @@ const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
   fill: 'horizontal',
 };
 
-export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
+export const NavBar = ({
+  gridArea,
+  setShowNewsletterModal,
+  ...rest
+}: {
+  gridArea?: string;
+  setShowNewsletterModal: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [showSidebar, setShowSidebar] = useState(false);
-  // const [activeItem, setActiveItem] = useState('Home');
 
   return (
-    <Header
-      gridArea={gridArea}
-      width="full"
-      // margin="large"
-
-      {...rest}
-    >
+    <Header gridArea={gridArea} width="full" {...rest}>
       <Box {...CONTENT_WIDTH_PROPS}>
         <ResponsiveContext.Consumer>
           {(size) => {
             const isSmall = size === 'small';
 
-            return isSmall ? (
-              // Mobile layout
-              <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
-                <BrandLink align={'center'} />
+            //TODO Reactor this - this hides the newsletter if on non desktopview
 
-                <Box style={{ position: 'absolute', right: 0 }}>
-                  <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
+            if (isSmall) {
+              setShowNewsletterModal(false);
+              return (
+                // Mobile layout
+                <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
+                  <BrandLink align={'center'} />
+
+                  <Box style={{ position: 'absolute', right: 0 }}>
+                    <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
+                  </Box>
                 </Box>
-              </Box>
-            ) : (
+              );
+            }
+
+            return (
               // Desktop layout
               <Grid
                 fill="horizontal"
@@ -79,7 +86,7 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
                     label="NEWSLETTER"
                     size="medium"
                     weight="light"
-                    onClick={() => alert('hi babes')}
+                    onClick={() => setShowNewsletterModal(true)}
                   />
                 </Box>
               </Grid>
@@ -96,7 +103,12 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
 
 const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
   return (
-    <Box width="100%" align={align} gridArea="brand">
+    <Box
+      width="100%"
+      align={align}
+      gridArea="brand"
+      // style={{ zIndex: 3 }}
+    >
       <Link href="/" passHref legacyBehavior>
         <Anchor label="LE YUZZI" size="medium" onClick={() => console.log('CLICK')} />
       </Link>
