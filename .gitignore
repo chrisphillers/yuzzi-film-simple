@@ -43,3 +43,4 @@ logs/
 *.tsbuildinfo 
 # Local Netlify folder
 .netlify
+.vscode/claudesync.json
