@@ -1,10 +1,11 @@
-// For proper testing of Server Components, use jest-fetch-mock or MSW to mock API calls
-// import { renderToString } from 'react-dom/server';
+jest.mock('@/components/ui/videomodal', () => ({
+  VideoStackPlayer: () => <div data-testid="video-player">Mocked</div>,
+}));
+jest.mock('@/lib/data');
+
 import '@testing-library/jest-dom';
 import Home from '../page';
 import * as dataModule from '@/lib/data';
-
-jest.mock('@/lib/data');
 
 describe('Home Server Component', () => {
   it('contains expected content after server rendering', async () => {
