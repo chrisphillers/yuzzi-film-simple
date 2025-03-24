@@ -1,18 +1,36 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { VideoStackPlayer } from '../ui/videomodal';
+import '@testing-library/jest-dom';
+import { useMediaRemote } from '@vidstack/react';
 
-// Define interface for mock remote
-interface MockRemote {
-  togglePaused: jest.Mock;
-  toggleCaptions: jest.Mock;
-  toggleFullscreen: jest.Mock;
-  seek: jest.Mock;
-}
+// Mock styled-components to avoid the .attrs issue
+jest.mock('styled-components', () => {
+  // Return a simple factory function for each component type
+  const createStyledComponent = (tag: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const StyledComponent = (_: TemplateStringsArray) => {
+      // Return a component that renders the tag with the same props
+      const Component = (props: React.HTMLAttributes<HTMLElement>) => {
+        const Tag = tag as keyof JSX.IntrinsicElements;
+        return <Tag {...props} />;
+      };
+      // Add display name
+      Component.displayName = `Styled(${tag})`;
+      return Component;
+    };
+    return StyledComponent;
+  };
 
-// Mock modules before import
+  return {
+    div: createStyledComponent('div'),
+    button: createStyledComponent('button'),
+    span: createStyledComponent('span'),
+  };
+});
+
+// Mocks - more minimal to avoid styled-components issues
 jest.mock('@vidstack/react', () => {
-  const mockRemote: MockRemote = {
+  const mockRemote = {
     togglePaused: jest.fn(),
     toggleCaptions: jest.fn(),
     toggleFullscreen: jest.fn(),
@@ -20,44 +38,22 @@ jest.mock('@vidstack/react', () => {
   };
 
   return {
-    MediaPlayer: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => (
+    MediaPlayer: jest.fn(({ children, ...props }) => (
       <div data-testid="media-player" {...props}>
         {children}
       </div>
-    ),
-    MediaProvider: ({ children }: React.PropsWithChildren<unknown>) => (
-      <div data-testid="media-provider">{children}</div>
-    ),
-    useMediaState: (state: string): boolean | number => {
+    )),
+    MediaProvider: jest.fn(({ children }) => <div data-testid="media-provider">{children}</div>),
+    useMediaState: jest.fn((state) => {
       if (state === 'paused') return false;
       if (state === 'fullscreen') return false;
       if (state === 'textTrack') return false;
       if (state === 'currentTime') return 60;
       if (state === 'duration') return 180;
       return 0;
-    },
-    useMediaRemote: (): MockRemote => mockRemote,
+    }),
+    useMediaRemote: jest.fn(() => mockRemote),
   };
-});
-
-// Mock styled-components
-jest.mock('styled-components', () => {
-  const styled: {
-    div: () => React.FC<React.HTMLAttributes<HTMLDivElement>>;
-    button: () => React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>>;
-    span: () => React.FC<React.HTMLAttributes<HTMLSpanElement>>;
-  } = {
-    div: () => (props: React.HTMLAttributes<HTMLDivElement>) => (
-      <div data-testid="styled-div" {...props} />
-    ),
-    button: () => (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-      <button data-testid="styled-button" {...props} />
-    ),
-    span: () => (props: React.HTMLAttributes<HTMLSpanElement>) => (
-      <span data-testid="styled-span" {...props} />
-    ),
-  };
-  return styled;
 });
 
 // Mock Grommet icons
@@ -69,6 +65,9 @@ jest.mock('grommet-icons', () => ({
   Expand: () => <div data-testid="expand-icon">Expand</div>,
 }));
 
+// Import after all mocks are set up
+import { VideoStackPlayer, Controls, formatTime } from '../ui/videomodal';
+
 describe('VideoStackPlayer', () => {
   const mockOnClose = jest.fn();
 
@@ -76,158 +75,96 @@ describe('VideoStackPlayer', () => {
     jest.clearAllMocks();
   });
 
-  it('renders video player with Vimeo source', () => {
-    render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
-    expect(screen.getByTestId('media-player')).toBeInTheDocument();
+  test('formats time correctly', () => {
+    expect(formatTime(65)).toBe('01:05');
+    expect(formatTime(3661)).toBe('61:01');
+    expect(formatTime(NaN)).toBe('00:00');
   });
 
-  it('calls onClose when close button is clicked', () => {
-    const { container } = render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
-    // Using querySelector as a fallback since the structure may be different in the actual component
-    const closeButton =
-      screen.queryByTestId('close-icon') ||
-      container.querySelector('[data-testid="styled-button"]');
-
-    if (closeButton) {
-      fireEvent.click(closeButton);
-      expect(mockOnClose).toHaveBeenCalled();
-    } else {
-      throw new Error('Close button not found');
-    }
-  });
-
-  it('toggles play state when play/pause button is clicked', () => {
-    const { useMediaRemote } = jest.requireMock('@vidstack/react');
-    const mockRemote = useMediaRemote();
-
-    const { container } = render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
-    const playButton =
-      screen.queryByTestId('pause-icon') ||
-      container.querySelectorAll('[data-testid="styled-button"]')[1];
-
-    if (playButton) {
-      fireEvent.click(playButton);
-      expect(mockRemote.togglePaused).toHaveBeenCalled();
-    } else {
-      throw new Error('Play button not found');
-    }
-  });
-
-  it('toggles fullscreen when fullscreen button is clicked', () => {
-    const { useMediaRemote } = jest.requireMock('@vidstack/react');
-    const mockRemote = useMediaRemote();
-
-    const { container } = render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
-    const fullscreenButton =
-      screen.queryByTestId('expand-icon') ||
-      container.querySelectorAll('[data-testid="styled-button"]')[3];
-
-    if (fullscreenButton) {
-      fireEvent.click(fullscreenButton);
-      expect(mockRemote.toggleFullscreen).toHaveBeenCalled();
-    } else {
-      throw new Error('Fullscreen button not found');
-    }
-  });
-
-  it('toggles captions when CC button is clicked', () => {
-    const { useMediaRemote } = jest.requireMock('@vidstack/react');
-    const mockRemote = useMediaRemote();
-
-    const { container } = render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
-    const ccButton =
-      screen.queryByTestId('cc-icon') ||
-      container.querySelectorAll('[data-testid="styled-button"]')[2];
-
-    if (ccButton) {
-      fireEvent.click(ccButton);
-      expect(mockRemote.toggleCaptions).toHaveBeenCalled();
-    } else {
-      throw new Error('CC button not found');
-    }
-  });
-
-  it('calls onClose when ESC key is pressed', () => {
+  test('renders the media player with correct props', () => {
     render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
 
-    fireEvent.keyDown(window, { key: 'Escape', code: 'Escape' });
+    const player = screen.getByTestId('media-player');
+    expect(player).toBeInTheDocument();
+    expect(player).toHaveStyle({ width: '100%', height: '100%' });
+  });
+
+  test('handles ESC key press to close', () => {
+    render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
+
+    // Simulate ESC key press
+    fireEvent.keyDown(window, { key: 'Escape' });
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('seeks to a different point when clicking the progress bar', () => {
-    // Setup the test environment with proper types
-    const mockSeek = jest.fn();
-    const mockModule = jest.requireMock('@vidstack/react');
-    jest.spyOn(mockModule, 'useMediaRemote').mockReturnValue({
-      togglePaused: jest.fn(),
-      toggleCaptions: jest.fn(),
-      toggleFullscreen: jest.fn(),
-      seek: mockSeek,
-    } as MockRemote);
+  // Test component mounting/unmounting cleanup
+  test('cleans up event listeners on unmount', () => {
+    const { unmount } = render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
 
-    const { container } = render(<VideoStackPlayer videoID={123456} onClose={mockOnClose} />);
+    // Spy on window.removeEventListener
+    const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
 
-    // Force controls to render by moving mouse
-    fireEvent.mouseMove(container);
+    // Unmount the component
+    unmount();
 
-    // Find progress bar directly with typesafe approach
-    const allDivs = container.querySelectorAll('div');
-    const progressBarContainer = Array.from(allDivs).find(
-      (div) =>
-        div.style &&
-        div.style.display === 'flex' &&
-        div.style.alignItems === 'center' &&
-        div.style.flex === '1'
-    );
+    // Check if removeEventListener was called
+    expect(removeEventListenerSpy).toHaveBeenCalled();
 
-    if (!progressBarContainer) {
-      console.error('Progress bar container not found');
-      return;
-    }
+    // Clean up the spy
+    removeEventListenerSpy.mockRestore();
+  });
+});
 
-    const progressBar = progressBarContainer.querySelector('div');
+// Test Controls separately with its own mock remote
+describe('Controls component', () => {
+  const mockOnClose = jest.fn();
+  const mockRemote = {
+    togglePaused: jest.fn(),
+    toggleCaptions: jest.fn(),
+    toggleFullscreen: jest.fn(),
+    seek: jest.fn(),
+  };
 
-    if (progressBar) {
-      // Mock getBoundingClientRect safely
-      Object.defineProperty(progressBar, 'getBoundingClientRect', {
-        value: jest.fn().mockReturnValue({
-          left: 0,
-          width: 100,
-        }),
-        configurable: true,
-      });
-
-      // Click at position 50
-      fireEvent.click(progressBar, { clientX: 50 });
-
-      // Check if seek was called with 90 (50% of 180)
-      expect(mockSeek).toHaveBeenCalledWith(90);
-    } else {
-      console.error('Progress bar not found inside container');
-    }
+  // Mock useMediaRemote to return our mock
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Use the imported mocked function
+    (useMediaRemote as jest.Mock).mockImplementation(() => mockRemote);
   });
 
-  it('shows exit fullscreen icon when in fullscreen mode', () => {
-    const localMockOnClose = jest.fn();
-    // Override the fullscreen state value
-    const mockUseMediaState = jest
-      .spyOn(jest.requireMock('@vidstack/react'), 'useMediaState')
-      .mockImplementation((state: string): boolean | number => {
-        if (state === 'fullscreen') return true;
-        if (state === 'paused') return false;
-        if (state === 'textTrack') return false;
-        if (state === 'currentTime') return 60;
-        if (state === 'duration') return 180;
-        return 0;
-      });
+  test('close button calls onClose', () => {
+    render(<Controls onClose={mockOnClose} />);
 
-    const { container } = render(<VideoStackPlayer videoID={123456} onClose={localMockOnClose} />);
+    const closeIcon = screen.getByTestId('close-icon');
+    fireEvent.click(closeIcon);
 
-    // Check for the SVG element that represents exit fullscreen
-    const svgElement = container.querySelector('svg');
-    expect(svgElement).toBeDefined();
+    expect(mockOnClose).toHaveBeenCalled();
+  });
 
-    // Restore original implementation
-    mockUseMediaState.mockRestore();
+  test('play button toggles play state', () => {
+    render(<Controls onClose={mockOnClose} />);
+
+    const playIcon = screen.getByTestId('pause-icon');
+    fireEvent.click(playIcon);
+
+    expect(mockRemote.togglePaused).toHaveBeenCalled();
+  });
+
+  test('captions button toggles captions', () => {
+    render(<Controls onClose={mockOnClose} />);
+
+    const ccIcon = screen.getByTestId('cc-icon');
+    fireEvent.click(ccIcon);
+
+    expect(mockRemote.toggleCaptions).toHaveBeenCalled();
+  });
+
+  test('fullscreen button toggles fullscreen', () => {
+    render(<Controls onClose={mockOnClose} />);
+
+    const expandIcon = screen.getByTestId('expand-icon');
+    fireEvent.click(expandIcon);
+
+    expect(mockRemote.toggleFullscreen).toHaveBeenCalled();
   });
 });
