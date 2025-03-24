@@ -103,11 +103,11 @@ export const ProgressBar = styled.div`
   }
 `;
 
-export const Progress = styled.div`
+export const Progress = styled.div<{ width: number }>`
   height: 100%;
   background-color: #3d7ff6;
   border-radius: 4px;
-  width: ${(props) => `${isNaN(props?.width) ? 0 : props?.width}%`};
+  width: ${(props) => `${isNaN(props.width) ? 0 : props.width}%`};
 `;
 
 export const TimeText = styled.span`
@@ -147,14 +147,11 @@ export const Controls = ({ onClose }: { onClose?: () => void }) => {
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('Close button clicked');
 
     if (typeof onClose === 'function') {
-      console.log('Calling onClose function');
       onClose();
 
       setTimeout(() => {
-        console.log('Retry close after delay');
         onClose();
       }, 100);
     }
@@ -163,7 +160,6 @@ export const Controls = ({ onClose }: { onClose?: () => void }) => {
   const handleToggleCaptions = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('CC button clicked');
     try {
       remote.toggleCaptions();
     } catch (err) {
