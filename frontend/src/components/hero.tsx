@@ -87,6 +87,8 @@ interface ModalVideoProps {
 }
 
 const FullScreenVideo: React.FC<ModalVideoProps> = ({ onClose, title, videoID }) => {
+  // use in future!
+  console.info(title);
   return (
     <Layer
       full={true}
@@ -107,7 +109,7 @@ const FullScreenVideo: React.FC<ModalVideoProps> = ({ onClose, title, videoID })
           e.stopPropagation();
         }}
       >
-        <VideoStackPlayer videoID={videoID} onClose={onClose} title={title} />
+        <VideoStackPlayer videoID={videoID} onClose={onClose} />
       </Box>
     </Layer>
   );
