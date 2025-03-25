@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useServerInsertedHTML } from 'next/navigation';
-import { Grommet, Button } from 'grommet';
+import { Grommet } from 'grommet';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 import { grommetTheme, cssVariables } from '../../lib/theme';
+import { useInactivityDetector } from '../hooks/useInactivityDetector';
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [styledComponentsStyleSheet] = useState(() => new ServerStyleSheet());
@@ -22,19 +23,20 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [dark, darkToggle] = useState(false);
 
+  const isInactive = useInactivityDetector();
+
+  useEffect(() => {
+    if (isInactive) {
+      darkToggle(true);
+    } else {
+      darkToggle(false);
+    }
+  }, [isInactive]);
+
   // Client-side rendering
   if (typeof window !== 'undefined') {
     return (
       <Grommet theme={grommetTheme} full themeMode={dark ? 'dark' : 'light'}>
-        <Button
-          style={{ zIndex: 4, position: 'absolute', top: 0, left: 0 }}
-          onClick={() => {
-            darkToggle(!dark);
-          }}
-        >
-          {!dark ? 'DARKSIDE' : 'FEELING BREEZY?'}
-        </Button>
-
         {children}
       </Grommet>
     );
@@ -44,14 +46,6 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
       <Grommet theme={grommetTheme} full themeMode={dark ? 'dark' : 'light'}>
-        <Button
-          style={{ zIndex: 4, position: 'absolute', top: 0, left: 0 }}
-          onClick={() => {
-            darkToggle(!dark);
-          }}
-        >
-          {!dark ? 'DARKSIDE' : 'FEELING BREEZY?'}
-        </Button>
         {children}
       </Grommet>
     </StyleSheetManager>
