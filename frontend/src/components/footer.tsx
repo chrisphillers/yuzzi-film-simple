@@ -20,7 +20,7 @@ export const Footer = ({ gridArea, ...rest }: { gridArea: string }) => {
       margin={{ top: 'medium' }}
       {...rest}
     >
-      <Box direction="row" gap="medium">
+      <Box direction="row" gap="medium" id="socialmedia">
         {navItems.map((item) => (
           <Anchor key={item.name} label={item.name} size="medium" href={item.href} />
         ))}
