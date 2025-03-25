@@ -1,6 +1,7 @@
 import { getFeatureFilm } from '@/lib/data';
-import { Box, Text, BoxExtendedProps, Paragraph, Button } from 'grommet';
+import { Box, Text, BoxExtendedProps, Paragraph, Button, Page } from 'grommet';
 import { Hero } from '../components/hero';
+import { FilmArticleContent } from '../components/film-article';
 
 const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
   width: { max: '1200px' },
@@ -13,7 +14,7 @@ export default async function Home() {
   // Server-side fetch the feature film data
   const featureFilm = await getFeatureFilm();
 
-  const { film, content } = featureFilm;
+  const { film } = featureFilm;
 
   return (
     <Box {...CONTENT_WIDTH_PROPS}>
@@ -43,9 +44,9 @@ export default async function Home() {
         </Button>
       </Box>
       <Box alignContent="center" justify="center" align="center">
-        <Paragraph fill={true} margin={{ horizontal: 'xlarge' }}>
-          {content}
-        </Paragraph>
+        <Page style={{ maxWidth: 'calc((100vw - 214px) / 10* 8 + 112px' }}>
+          <FilmArticleContent article={featureFilm}></FilmArticleContent>
+        </Page>
       </Box>
     </Box>
   );

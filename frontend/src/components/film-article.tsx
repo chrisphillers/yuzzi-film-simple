@@ -1,5 +1,6 @@
 import { type FilmArticle } from '@/lib/data';
-import { Box, Paragraph, Text } from 'grommet';
+import { Paragraph, Text, Box } from 'grommet';
+import Image from 'next/image';
 
 interface FilmArticleContentProps {
   article: FilmArticle;
@@ -9,21 +10,32 @@ interface FilmArticleContentProps {
 
 export function FilmArticleContent({ article }: FilmArticleContentProps) {
   return (
-    <>
-      {/* <Box align="center" margin={'large'}> */}
+    <Box margin={'small'}>
       {article.content.map((paragraph, index) => (
-        <Paragraph margin={'small'} key={index} fill={true}>
+        <Paragraph key={index} fill={true}>
           {paragraph}
         </Paragraph>
       ))}
+{/* TODO: Replace with Grommet when fixed */}
+      <Image
+        src="/yuzzi-test.png"
+        objectFit="cover"
+        width={530}
+        height={300}
+        alt="Picture of the author"
+      />
       {article.quotes.map((quote, index) => (
-        <Box key={index} margin={{ vertical: 'medium' }} pad={{ vertical: 'medium' }}>
+        <Paragraph key={index} pad={{ vertical: 'medium' }} fill>
           <Text weight="bold">
             "{quote.text} {quote.author}"
           </Text>
-        </Box>
+        </Paragraph>
       ))}
-      {/* </Box> */}
-    </>
+      {article.content.map((paragraph, index) => (
+        <Paragraph key={index} fill={true}>
+          {paragraph}
+        </Paragraph>
+      ))}
+    </Box>
   );
 }

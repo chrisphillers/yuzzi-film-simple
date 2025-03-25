@@ -20,6 +20,7 @@ const customTheme: ThemeType = {
     selected: { color: colorDefinitions.blue },
     colors: {
       brand: 'black',
+      focus: 'white',
       blue: colorDefinitions.blue,
       white: colorDefinitions.white,
       offwhite: colorDefinitions.offwhite,

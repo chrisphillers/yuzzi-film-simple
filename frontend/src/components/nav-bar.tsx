@@ -10,6 +10,7 @@ import {
   BoxExtendedProps,
   ResponsiveContext,
   Grid,
+  Layer,
 } from 'grommet';
 import { Close } from 'grommet-icons';
 import { useState, useEffect, useContext } from 'react';
@@ -122,8 +123,18 @@ interface MobileNavProps {
 
 const MobileNav: React.FC<MobileNavProps> = ({ onClose }) => {
   return (
-    // TODO: Pref use Grommet Layer here - however it looks like there are some issues with React 19 for now (untested beta)
-    <Box
+    <Layer
+      background={'black'}
+      full="vertical"
+      animate={false}
+      onEsc={() => {
+        console.log('escape');
+
+        onClose();
+      }}
+      // position="right" animate={true}
+    >
+      {/* <Box
       style={{
         position: 'fixed',
         width: '100vw',
@@ -133,7 +144,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ onClose }) => {
         backgroundColor: 'black',
         zIndex: 2,
       }}
-    >
+    > */}
       <Box fill direction="column" pad={{ horizontal: 'medium', vertical: 'medium' }} gap="large">
         <Box direction="row" justify="between" align="center" pad={{ bottom: 'medium' }}>
           <Box flex />
@@ -183,6 +194,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ onClose }) => {
           </Nav>
         </Box>
       </Box>
-    </Box>
+      {/* </Box> */}
+    </Layer>
   );
 };
