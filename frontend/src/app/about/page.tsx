@@ -14,7 +14,6 @@ export default async function About() {
   const aboutUs = await getAbout();
 
   const { content, nav } = aboutUs;
-  console.log(content);
 
   return (
     <section>

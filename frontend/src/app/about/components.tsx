@@ -175,7 +175,7 @@ export const FilmSubmissionForm: React.FC<FilmSubmissionFormProps> = ({ content 
       <Form
         value={value}
         onChange={(nextValue) => setValue(nextValue)}
-        onSubmit={({ value: nextValue }) => console.log(nextValue)}
+        onSubmit={({ value: nextValue }) => console.info(nextValue)}
       >
         {content.map(({ fieldType, title }) => {
           // if (fieldType === 'text') {

@@ -118,7 +118,7 @@ const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
   return (
     <Box width="100%" align={align} gridArea="brand">
       <Link href="/" passHref legacyBehavior>
-        <Anchor label="LE YUZZI" size="medium" onClick={() => console.log('CLICK')} />
+        <Anchor label="LE YUZZI" size="medium" />
       </Link>
     </Box>
   );
@@ -129,7 +129,7 @@ interface MobileMenuProps {
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ onClose }) => {
-  const [active, setActive] = useState<string | null>(null);
+  // const [active, setActive] = useState<string | null>(null);
 
   return (
     <Layer
@@ -137,8 +137,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onClose }) => {
       full="vertical"
       animate={false}
       onEsc={() => {
-        console.log('escape');
-
         onClose();
       }}
       // position="right" animate={true}

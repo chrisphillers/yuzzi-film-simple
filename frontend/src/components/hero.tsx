@@ -27,6 +27,7 @@ export const Hero = ({ title }: { title: string }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [openVideo, setOpenVideo] = useState(false);
+  console.info(isLoaded);
 
   return (
     <Box

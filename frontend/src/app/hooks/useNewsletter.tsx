@@ -54,7 +54,7 @@ export const useNewsletterValidation = ({
       }
 
       // Valid submission
-      console.log('Submit', value);
+      console.info('Submit', value);
 
       // Show submitting state
       setIsSubmitting(true);
