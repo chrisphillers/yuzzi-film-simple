@@ -49,7 +49,7 @@ describe('NavBar', () => {
       renderDesktopNavBar();
 
       // Check that navigation items are displayed
-      expect(screen.getByText('JOURNAL')).toBeInTheDocument();
+      expect(screen.getByText('ARTICLES')).toBeInTheDocument();
       expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
       expect(screen.getByText('SHOP')).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe('NavBar', () => {
       expect(screen.getByTestId('newsletter-component')).toBeInTheDocument();
 
       // Navigation items should not be visible
-      expect(screen.queryByText('JOURNAL')).not.toBeInTheDocument();
+      expect(screen.queryByText('ARTICLES')).not.toBeInTheDocument();
       expect(screen.queryByText('ARCHIVES')).not.toBeInTheDocument();
       expect(screen.queryByText('ABOUT')).not.toBeInTheDocument();
       expect(screen.queryByText('SHOP')).not.toBeInTheDocument();
@@ -97,7 +97,7 @@ describe('NavBar', () => {
       expect(screen.queryByTestId('newsletter-component')).not.toBeInTheDocument();
 
       // Navigation items should be visible again
-      expect(screen.getByText('JOURNAL')).toBeInTheDocument();
+      expect(screen.getByText('ARTICLES')).toBeInTheDocument();
       expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
       expect(screen.getByText('SHOP')).toBeInTheDocument();
@@ -124,7 +124,7 @@ describe('NavBar', () => {
       expect(screen.getByRole('button')).toBeInTheDocument();
 
       // Navigation items should not be visible
-      expect(screen.queryByText('JOURNAL')).not.toBeInTheDocument();
+      expect(screen.queryByText('ARTICLES')).not.toBeInTheDocument();
       expect(screen.queryByText('ARCHIVES')).not.toBeInTheDocument();
       expect(screen.queryByText('ABOUT')).not.toBeInTheDocument();
       expect(screen.queryByText('SHOP')).not.toBeInTheDocument();
