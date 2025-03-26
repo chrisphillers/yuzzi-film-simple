@@ -30,14 +30,14 @@ jest.mock('grommet', () => {
   };
 });
 
-describe('NavBar', () => {
+describe('Menu', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (Newsletter as jest.Mock).mockClear();
   });
 
   describe('Desktop view', () => {
-    const renderDesktopNavBar = () => {
+    const renderDesktopMenu = () => {
       return render(
         <ResponsiveContext.Provider value="medium">
           <Menu />
@@ -45,14 +45,14 @@ describe('NavBar', () => {
       );
     };
 
-    it('renders navigation links when newsletter is not shown', () => {
-      renderDesktopNavBar();
+    it('renders menu links when newsletter is not shown', () => {
+      renderDesktopMenu();
 
       // Check that navigation items are displayed
       expect(screen.getByText('ARTICLES')).toBeInTheDocument();
       expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
-      expect(screen.getByText('SHOP')).toBeInTheDocument();
+      expect(screen.getByText('SUBMIT A FILM')).toBeInTheDocument();
 
       // Check for newsletter link
       expect(screen.getByText('NEWSLETTER')).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe('NavBar', () => {
     });
 
     it('shows newsletter when newsletter link is clicked', () => {
-      renderDesktopNavBar();
+      renderDesktopMenu();
 
       // Find and click the newsletter link
       const newsletterLink = screen.getByText('NEWSLETTER');
@@ -80,7 +80,7 @@ describe('NavBar', () => {
     });
 
     it('hides newsletter when cancel button is clicked', () => {
-      renderDesktopNavBar();
+      renderDesktopMenu();
 
       // Show newsletter first
       const newsletterLink = screen.getByText('NEWSLETTER');
@@ -100,13 +100,13 @@ describe('NavBar', () => {
       expect(screen.getByText('ARTICLES')).toBeInTheDocument();
       expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
-      expect(screen.getByText('SHOP')).toBeInTheDocument();
+      expect(screen.getByText('SUBMIT A FILM')).toBeInTheDocument();
       expect(screen.getByText('NEWSLETTER')).toBeInTheDocument();
     });
   });
 
   describe('Mobile view', () => {
-    const renderMobileNavBar = () => {
+    const renderMobileMenu = () => {
       return render(
         <ResponsiveContext.Provider value="small">
           <Menu />
@@ -114,8 +114,8 @@ describe('NavBar', () => {
       );
     };
 
-    it('renders mobile view with menu icon and no navigation items', () => {
-      renderMobileNavBar();
+    it('renders mobile view with menu icon and no menu items', () => {
+      renderMobileMenu();
 
       // Brand should be visible
       expect(screen.getByText('LE YUZZI')).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe('NavBar', () => {
 
     //TODO: Sidebar functionality is yet to be done
     // it('shows sidebar when menu button is clicked', () => {
-    //   renderMobileNavBar();
+    //   renderMobileMenu();
 
     //   // Click menu button
     //   const menuButton = screen.getByRole('button');
@@ -147,7 +147,7 @@ describe('NavBar', () => {
     // });
 
     it('never shows newsletter in mobile view due to useEffect', () => {
-      renderMobileNavBar();
+      renderMobileMenu();
 
       // Newsletter should not be visible in mobile view
       expect(screen.queryByTestId('newsletter-component')).not.toBeInTheDocument();

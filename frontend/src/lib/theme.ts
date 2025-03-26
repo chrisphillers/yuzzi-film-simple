@@ -16,6 +16,9 @@ const colorDefinitions = {
 // Custom Grommet theme
 const customTheme: ThemeType = {
   global: {
+    active: {
+      color: colorDefinitions.blue,
+    },
     hover: { color: colorDefinitions.blue },
     selected: { color: colorDefinitions.blue },
     colors: {

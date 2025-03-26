@@ -7,21 +7,21 @@ import { VideoStackPlayer } from './ui/videomodal';
 const VimeoPlayer = lazy(() => import('@u-wave/react-vimeo'));
 
 // TODO: Skeleton fallback - fiinish
-const VideoSkeleton = () => (
-  <Box
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      background: 'var(--color-grey)',
-    }}
-    width="100%"
-    height="100%"
-    round={true}
-  />
-);
+// const VideoSkeleton = () => (
+//   <Box
+//     style={{
+//       position: 'absolute',
+//       top: 0,
+//       left: 0,
+//       width: '100%',
+//       height: '100%',
+//       background: 'var(--color-grey)',
+//     }}
+//     width="100%"
+//     height="100%"
+//     round={true}
+//   />
+// );
 
 export const Hero = ({ title }: { title: string }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -37,7 +37,9 @@ export const Hero = ({ title }: { title: string }) => {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => isLoaded && setOpenVideo(true)}
+      onClick={() => {
+        setOpenVideo(!openVideo);
+      }}
     >
       <Box
         style={{
@@ -68,10 +70,12 @@ export const Hero = ({ title }: { title: string }) => {
           />
         )}
 
-        <Suspense fallback={<VideoSkeleton />}>
+        <Suspense>
+          {/* <Suspense fallback={<VideoSkeleton />}> */}
           <VimeoPlayer
             id={title}
-            video="76979871"
+            video="1067064372"
+            // video="76979871"
             autoplay={true}
             muted={true}
             loop={true}
@@ -88,7 +92,11 @@ export const Hero = ({ title }: { title: string }) => {
       </Box>
 
       {openVideo && (
-        <FullScreenVideo onClose={() => setOpenVideo(false)} title={title} videoID={150781794} />
+        <FullScreenVideo
+          onClose={() => setOpenVideo(!openVideo)}
+          title={title}
+          videoID={150781794}
+        />
       )}
     </Box>
   );

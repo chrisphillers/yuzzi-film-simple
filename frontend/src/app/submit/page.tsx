@@ -1,6 +1,7 @@
-import { Header } from 'grommet';
-import { SidebarLayout } from '../layout';
+import { Heading, Page } from 'grommet';
+import { getAbout } from '@/lib/data';
 // import { Metadata } from 'next';
+import { FilmSubmissionForm } from '../about/components';
 
 //TODO - dynamic metadata
 // export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
@@ -23,13 +24,17 @@ import { SidebarLayout } from '../layout';
 //     title: `Le Yuzzi - ${params.id}`,
 //   };
 // }
-
-export default async function Articles() {
+const { nav } = await getAbout();
+export default async function Submit() {
   return (
     <section>
-      <SidebarLayout>
-        <Header>Articles</Header>
-      </SidebarLayout>
+      <Heading level={2} margin="none" textAlign="center">
+        SUBMIT A FILM
+      </Heading>
+      <Page kind="narrow" width={'small'}>
+        {/* @ts-expect-error*/}
+        <FilmSubmissionForm content={nav[0].content}></FilmSubmissionForm>
+      </Page>
     </section>
   );
 }

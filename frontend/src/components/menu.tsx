@@ -21,7 +21,7 @@ const menuItems = [
   { name: 'ARTICLES', href: '/articles' },
   { name: 'ARCHIVES', href: '/archives' },
   { name: 'ABOUT', href: '/about' },
-  { name: 'SHOP', href: '/shop' },
+  { name: 'SUBMIT A FILM', href: '/submit' },
 ];
 
 const socialItems = [
@@ -39,6 +39,7 @@ const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
 export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
   const [showNewsletter, setShowNewsletter] = useState<boolean>(false);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [active, setActive] = useState<string | null>(null);
 
   // Size from Grommet context
   const size = useContext(ResponsiveContext);
@@ -87,7 +88,13 @@ export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
               <Nav direction="row" gap="medium">
                 {menuItems.map((item) => (
                   <Link key={item.name} href={item.href} passHref legacyBehavior>
-                    <Anchor size="medium" label={item.name} weight="light" />
+                    <Anchor
+                      size="medium"
+                      label={item.name}
+                      weight="light"
+                      active={item.name === active}
+                      onClick={() => setActive(item.name)}
+                    />
                   </Link>
                 ))}
               </Nav>
@@ -122,6 +129,8 @@ interface MobileMenuProps {
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ onClose }) => {
+  const [active, setActive] = useState<string | null>(null);
+
   return (
     <Layer
       background={'black'}
@@ -160,11 +169,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onClose }) => {
           {menuItems.map((menuItem) => {
             return (
               <Anchor
+                // active={menuItem.name === active}
                 href={menuItem.href}
                 key={menuItem.name}
                 color="white"
                 weight="medium"
                 size="medium"
+                // onClick={setActive(menuItem.name)}
               >
                 {menuItem.name}
               </Anchor>

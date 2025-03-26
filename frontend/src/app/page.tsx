@@ -11,7 +11,7 @@ export default async function Home() {
   const { film } = featureFilm;
 
   return (
-    <>
+    <section>
       <Box>
         <Hero title={film.title} />
 
@@ -50,6 +50,6 @@ export default async function Home() {
       {/* <Watch /> */}
       {/* <ScrollTestOverride />
       <ScrollDebugger /> */}
-    </>
+    </section>
   );
 }
