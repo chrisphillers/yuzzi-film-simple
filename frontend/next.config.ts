@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   compiler: {
     styledComponents: true,
   },
+  images: {
+    unoptimized: true,
+  },
 };
 
 //TODO Complete for SEO - think about LLMs
