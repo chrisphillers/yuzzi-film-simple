@@ -16,7 +16,7 @@ export function FilmArticleContent({ article }: FilmArticleContentProps) {
           {paragraph}
         </Paragraph>
       ))}
-{/* TODO: Replace with Grommet when fixed */}
+      {/* TODO: Replace with Grommet when fixed */}
       <Image
         src="/yuzzi-test.png"
         objectFit="cover"

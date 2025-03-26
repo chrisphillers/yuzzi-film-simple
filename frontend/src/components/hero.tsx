@@ -1,13 +1,27 @@
 'use client';
 import { Suspense, lazy, useState } from 'react';
-import { Box, Layer, Skeleton } from 'grommet';
+import { Box, Layer } from 'grommet';
 import { VideoStackPlayer } from './ui/videomodal';
 
 // Lazy-load the Vimeo component
 const VimeoPlayer = lazy(() => import('@u-wave/react-vimeo'));
 
-// Skeleton fallback
-const VideoSkeleton = () => <Skeleton width="100%" height="100%" round={true} />;
+// TODO: Skeleton fallback - fiinish
+const VideoSkeleton = () => (
+  <Box
+    style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      background: 'var(--color-grey)',
+    }}
+    width="100%"
+    height="100%"
+    round={true}
+  />
+);
 
 export const Hero = ({ title }: { title: string }) => {
   const [isHovered, setIsHovered] = useState(false);

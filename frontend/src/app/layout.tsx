@@ -4,7 +4,9 @@ import { NavBar } from '@/components/nav-bar';
 import { Footer } from '@/components/footer';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Box, Grid } from 'grommet';
+import { Box, Grid, BoxExtendedProps } from 'grommet';
+// import { Watch } from '../components/modals/watch';
+// import { AppProvider } from './context/scrollcontext';
 
 export const metadata: Metadata = {
   title: 'Le Yuzzi',
@@ -26,6 +28,13 @@ export const metadata: Metadata = {
   },
 };
 
+const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
+  width: { max: '1200px' },
+  margin: 'auto',
+  pad: { horizontal: 'medium' },
+  fill: 'horizontal',
+};
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -41,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider>
+          {/* <AppProvider> */}
           <Grid
             rows={['xxsmall', 'auto', 'xxsmall']}
             columns={['auto']}
@@ -49,11 +59,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             tabIndex={0}
           >
             <NavBar gridArea="header" />
-            <Box gridArea="main" width="100%">
+            <Box {...CONTENT_WIDTH_PROPS} gridArea="main">
               <main>{children}</main>
             </Box>
+
             <Footer gridArea="footer" />
           </Grid>
+          {/* </AppProvider> */}
         </ThemeProvider>
       </body>
     </html>
