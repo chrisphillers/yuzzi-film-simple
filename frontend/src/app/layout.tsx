@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { NavBar } from '@/components/nav-bar';
+import { Menu } from '@/components/menu';
 import { Footer } from '@/components/footer';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gap="small"
             tabIndex={0}
           >
-            <NavBar gridArea="header" />
+            <Menu gridArea="header" />
             <Box {...CONTENT_WIDTH_PROPS} gridArea="main">
               <main>{children}</main>
             </Box>
