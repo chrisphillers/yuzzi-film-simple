@@ -32,7 +32,7 @@ export default async function Submit() {
         SUBMIT A FILM
       </Heading>
       <Page kind="narrow" width={'small'}>
-        {/* @ts-expect-error*/}
+        {/* @ts-expect-error: Typescript error - just a placeholder so no need to fix now */}
         <FilmSubmissionForm content={nav[0].content}></FilmSubmissionForm>
       </Page>
     </section>

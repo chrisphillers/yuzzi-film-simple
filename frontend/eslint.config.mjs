@@ -11,11 +11,26 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.config({
-    extends: ['next/core-web-vitals', 'next/typescript'],
+    extends: ['next/core-web-vitals', 'next/typescript', 'prettier'],
+    plugins: ['prettier'],
     rules: {
+      'prettier/prettier': 'error',
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
       'react/no-unescaped-entities': 'off',
       '@next/next/no-page-custom-font': 'off',
+      '@typescript-eslint/ban-ts-comment': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
+    overrides: [
+      {
+        files: ['jest.config.js'],
+        rules: {
+          '@typescript-eslint/no-require-imports': 'off',
+        },
+      },
+    ],
   }),
 ];
 

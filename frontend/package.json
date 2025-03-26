@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "jest --silent &&  NODE_OPTIONS='--inspect' next dev --turbopack --port 3000",
+    "dev-no-test": "NODE_OPTIONS='--inspect' next dev --turbopack --port 3000",
     "build": "ENV=PRODUCTION next build",
     "start": "next start",
     "lint": "next lint",
