@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     styledComponents: true,
   },
   images: {
-    unoptimized: true,
+    unoptimized: false,
   },
 };
 
