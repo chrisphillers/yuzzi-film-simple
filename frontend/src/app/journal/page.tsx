@@ -24,10 +24,10 @@ import { SidebarLayout } from '../layout';
 //   };
 // }
 
-export default async function About() {
+export default async function Articles() {
   return (
     <SidebarLayout>
-      <Header>JOURNAL</Header>
+      <Header>Articles</Header>
     </SidebarLayout>
   );
 }

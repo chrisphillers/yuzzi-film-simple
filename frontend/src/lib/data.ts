@@ -17,6 +17,11 @@ export type FilmArticle = {
   }[];
 };
 
+export type AboutUs = {
+  title: string;
+  content: string[];
+};
+
 // Dummy data for server-side rendering
 export async function getFeatureFilm(): Promise<FilmArticle> {
   return {
@@ -40,6 +45,17 @@ export async function getFeatureFilm(): Promise<FilmArticle> {
         text: "I really like groups, gangs. It's very cinematic. A group is, in a snapshot, a condensation, a piece of society.",
         author: 'THIERRY DE PERETTI',
       },
+    ],
+  };
+}
+
+export async function getAbout(): Promise<AboutUs> {
+  return {
+    title: 'About',
+    content: [
+      'Le Cinéma Club is a uniquely curated streaming platform screening one film every week, for free. Available for seven days to all visitors globally, selections vary in genre and length, with special attention given to short formats',
+      'Founded in 2015, the platform acts as a dynamic online cinema space, providing exciting access to diverse and original voices. Screenings celebrate a new generation of filmmakers, alongside rare gems and other inspiring discoveries. Our Journal features curated film lists, exclusive interviews and image galleries. With roots in New York and Paris, Le Cinéma Club is a weekly rendezvous for movie lovers and filmmakers around the world.',
+      'Le Cinéma Club is presented with the support of CHANEL.',
     ],
   };
 }
