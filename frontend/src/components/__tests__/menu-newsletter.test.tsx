@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { NavBar } from '../nav-bar';
+import { Menu } from '../menu';
 import { Newsletter } from '../newsletter/newsletter';
 import { ResponsiveContext } from 'grommet';
 import * as React from 'react';
@@ -40,7 +40,7 @@ describe('NavBar', () => {
     const renderDesktopNavBar = () => {
       return render(
         <ResponsiveContext.Provider value="medium">
-          <NavBar />
+          <Menu />
         </ResponsiveContext.Provider>
       );
     };
@@ -109,7 +109,7 @@ describe('NavBar', () => {
     const renderMobileNavBar = () => {
       return render(
         <ResponsiveContext.Provider value="small">
-          <NavBar />
+          <Menu />
         </ResponsiveContext.Provider>
       );
     };
@@ -159,7 +159,7 @@ describe('NavBar', () => {
 
     render(
       <ResponsiveContext.Provider value="medium">
-        <NavBar />
+        <Menu />
       </ResponsiveContext.Provider>
     );
 

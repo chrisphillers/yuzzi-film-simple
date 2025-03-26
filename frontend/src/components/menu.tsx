@@ -17,8 +17,8 @@ import { useState, useEffect, useContext } from 'react';
 import { Menu as MenuIcon } from 'grommet-icons';
 import { Newsletter } from './newsletter/newsletter';
 
-const navItems = [
-  { name: 'JOURNAL', href: '/journal' },
+const menuItems = [
+  { name: 'ARTICLES', href: '/articles' },
   { name: 'ARCHIVES', href: '/archives' },
   { name: 'ABOUT', href: '/about' },
   { name: 'SHOP', href: '/shop' },
@@ -36,7 +36,7 @@ const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
   fill: 'horizontal',
 };
 
-export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
+export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
   const [showNewsletter, setShowNewsletter] = useState<boolean>(false);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
@@ -63,7 +63,7 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
         {isSmall ? (
           // Mobile layout
           <>
-            {showSidebar && <MobileNav onClose={() => setShowSidebar(false)}></MobileNav>}
+            {showSidebar && <MobileMenu onClose={() => setShowSidebar(false)}></MobileMenu>}
             <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
               <BrandLink align={'center'} />
               <Box style={{ position: 'absolute', right: 0 }}>
@@ -85,7 +85,7 @@ export const NavBar = ({ gridArea, ...rest }: { gridArea?: string }) => {
             <BrandLink align={'left'} />
             <Box gridArea="menu" align="center">
               <Nav direction="row" gap="medium">
-                {navItems.map((item) => (
+                {menuItems.map((item) => (
                   <Link key={item.name} href={item.href} passHref legacyBehavior>
                     <Anchor size="medium" label={item.name} weight="light" />
                   </Link>
@@ -117,11 +117,11 @@ const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
   );
 };
 
-interface MobileNavProps {
+interface MobileMenuProps {
   onClose: () => void;
 }
 
-const MobileNav: React.FC<MobileNavProps> = ({ onClose }) => {
+const MobileMenu: React.FC<MobileMenuProps> = ({ onClose }) => {
   return (
     <Layer
       background={'black'}
@@ -157,7 +157,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ onClose }) => {
         </Box>
         {/* Menu Section*/}
         <Nav gap="medium">
-          {navItems.map((menuItem) => {
+          {menuItems.map((menuItem) => {
             return (
               <Anchor
                 href={menuItem.href}
