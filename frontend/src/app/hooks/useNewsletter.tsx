@@ -14,8 +14,7 @@ interface UseNewsletterValidationReturn {
   setFormValue: React.Dispatch<React.SetStateAction<NewsletterFormState>>;
   validationMessage: string;
   showingError: boolean;
-  isSubmitting: boolean;
-  handleSubmit: ({ value }: { value: NewsletterFormState }) => void;
+  handleSubmit: ({ value }: { value: NewsletterFormState }) => boolean;
   handleCancel: () => void;
 }
 
@@ -26,50 +25,47 @@ export const useNewsletterValidation = ({
   const [validationMessage, setValidationMessage] = useState<string>('');
   const [showingError, setShowingError] = useState<boolean>(false);
   const [originalValue, setOriginalValue] = useState<string>('');
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmit = useCallback(
-    ({ value }: { value: NewsletterFormState }) => {
-      // Validate email first
+    ({ value }: { value: NewsletterFormState }): boolean => {
+      // Clear previous errors before validation
+      setValidationMessage('');
+      setShowingError(false);
+
       const emailValidator = getEmailValidators()[0];
       const validationResult = emailValidator(value.email);
 
       if (validationResult) {
-        // Store original value
+        // Validation failed
         setOriginalValue(value.email);
-        // Show error in input
         setValidationMessage(validationResult);
         setShowingError(true);
 
-        // Reset after 1 second
+        // Reset error display after 1 second
         setTimeout(() => {
           setShowingError(false);
-          // Restore original value if needed
-          if (validationMessage) {
-            setFormValue((prev) => ({ ...prev, email: originalValue }));
-          }
+          // Restore original value visually if needed, but keep error message conceptually
+          // setFormValue((prev) => ({ ...prev, email: originalValue })); // Maybe not needed if controlled input displays validationMessage
         }, 1000);
 
-        return;
+        return false; // Indicate validation failed
       }
 
-      // Valid submission
-      console.info('Submit', value);
+      // Validation passed
+      return true; // Indicate validation succeeded
 
-      // Show submitting state
-      setIsSubmitting(true);
-
-      // Simulate submission process (replace with actual submission)
-      setTimeout(() => {
-        setIsSubmitting(false);
-        // You could reset the form here or show a success message
-      }, 1000);
+      // ---- Removed API Submission Logic ----
     },
-    [validationMessage, originalValue]
+    // Dependencies: only need originalValue if we restore it visually
+    [
+      /* originalValue */
+    ]
   );
 
   const handleCancel = useCallback(() => {
     setFormValue({ email: '' });
+    setValidationMessage(''); // Clear any validation errors on cancel
+    setShowingError(false);
     onCancel();
   }, [onCancel]);
 
@@ -78,7 +74,6 @@ export const useNewsletterValidation = ({
     setFormValue,
     validationMessage,
     showingError,
-    isSubmitting,
     handleSubmit,
     handleCancel,
   };

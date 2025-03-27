@@ -1,6 +1,8 @@
 'use client';
 import { Box, Button, Form, FormField, TextInput, Text, Heading } from 'grommet';
 import { useNewsletterValidation } from '../../app/hooks/useNewsletter';
+import { useCreateSubscriber } from '../../app/hooks/useCreateSubscriber';
+import { useState } from 'react';
 
 interface NewsletterProps {
   setShowNewsletter: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,17 +13,60 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
     formValue,
     setFormValue,
     validationMessage,
-    showingError,
-    isSubmitting,
-    handleSubmit,
-    handleCancel,
+    showingError: showingValidationError,
+    handleSubmit: validateForm,
+    handleCancel: handleCancelValidation,
   } = useNewsletterValidation({
     onCancel: () => setShowNewsletter(false),
   });
 
+  const { createSubscriber, loading: isSubmitting, error: apiError } = useCreateSubscriber();
+
+  const [submissionStatusMessage, setSubmissionStatusMessage] = useState<string>('');
+
+  const handleFormSubmit = async ({ value }: { value: { email: string } }) => {
+    setSubmissionStatusMessage('');
+    const isValid = validateForm({ value });
+
+    if (isValid) {
+      const success = await createSubscriber(value.email);
+
+      if (success) {
+        setFormValue({ email: '' });
+        handleCancelValidation();
+      } else {
+        if (apiError) {
+          setSubmissionStatusMessage(apiError.message);
+        } else {
+          setSubmissionStatusMessage('An unexpected error occurred.');
+        }
+      }
+    } else {
+    }
+  };
+
+  const handleCancel = () => {
+    setSubmissionStatusMessage('');
+    handleCancelValidation();
+  };
+
+  const getTextInputValue = () => {
+    if (showingValidationError) {
+      return validationMessage;
+    }
+    return formValue.email || '';
+  };
+
+  const getTextInputColor = () => {
+    if (showingValidationError) {
+      return 'red';
+    }
+    return 'inherit';
+  };
+
   return (
     <Box>
-      <Form value={formValue} onChange={setFormValue} validate="submit" onSubmit={handleSubmit}>
+      <Form value={formValue} onChange={setFormValue} validate="blur" onSubmit={handleFormSubmit}>
         <Box direction="row" align="center" justify="between" width="100%">
           <Box align="start">
             <Heading
@@ -45,20 +90,12 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
           <Box direction="row" align="center" justify="center" flex="grow" height="40px">
             {isSubmitting ? (
               <Box align="center" justify="center" height="40px">
-                <Text
-                  data-testid="submitting-text"
-                  style={{
-                    fontSize: '18px',
-                    transitionProperty: 'color',
-                    transitionDuration: '0.4s',
-                    transitionTimingFunction: 'ease',
-                  }}
-                >
+                <Text data-testid="submitting-text" size="large">
                   Submitting...
                 </Text>
               </Box>
             ) : (
-              <Box direction="row" align="center">
+              <Box direction="row" align="center" gap="small">
                 <FormField name="email" margin="none" htmlFor="email">
                   <TextInput
                     size="medium"
@@ -67,7 +104,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
                     id="email"
                     name="email"
                     data-testid="email-input"
-                    value={showingError ? validationMessage : formValue.email || ''}
+                    value={getTextInputValue()}
                     onChange={(event) =>
                       setFormValue({
                         ...formValue,
@@ -75,7 +112,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
                       })
                     }
                     style={{
-                      color: showingError ? 'red' : 'inherit',
+                      color: getTextInputColor(),
                       transitionProperty: 'color',
                       transitionDuration: '0.4s',
                       transitionTimingFunction: 'ease',
@@ -89,6 +126,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
                   size="medium"
                   plain
                   data-testid="subscribe-button"
+                  disabled={isSubmitting}
                   style={{
                     fontWeight: 'light',
                     fontSize: '18px',
@@ -106,9 +144,19 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
               data-testid="cancel-button"
               style={{ fontWeight: 'light', fontSize: '19px' }}
               onClick={handleCancel}
+              disabled={isSubmitting}
             />
           </Box>
         </Box>
+
+        TODO: Sort styling
+        {submissionStatusMessage && (
+          <Box pad={{ vertical: 'small' }} align="center">
+            <Text color="status-error" size="small" data-testid="submission-error-text">
+              {submissionStatusMessage}
+            </Text>
+          </Box>
+        )}
       </Form>
     </Box>
   );
