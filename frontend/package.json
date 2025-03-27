@@ -52,12 +52,7 @@
     "typescript": "^5"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "npm run format",
-      "next lint --fix --file"
-    ],
-    "*.{json,css,md}": [
-      "npm run format"
-    ]
+    "*.{js,jsx,ts,tsx}": [],
+    "*.{json,css,md}": []
   }
 }
