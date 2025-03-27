@@ -118,7 +118,7 @@ const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
   return (
     <Box width="100%" align={align} gridArea="brand">
       <Link href="/" passHref legacyBehavior>
-        <Anchor label="LE YUZZI" size="medium" />
+        <Anchor label="LE YUZZI" size="medium" data-testid="brandLink" />
       </Link>
     </Box>
   );

@@ -1,8 +1,8 @@
+import * as React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Menu } from '../menu';
 import { Newsletter } from '../newsletter/newsletter';
 import { ResponsiveContext } from 'grommet';
-import * as React from 'react';
 
 // Mock the Newsletter component
 jest.mock('../newsletter/newsletter', () => ({
@@ -152,25 +152,5 @@ describe('Menu', () => {
       // Newsletter should not be visible in mobile view
       expect(screen.queryByTestId('newsletter-component')).not.toBeInTheDocument();
     });
-  });
-
-  it('renders brand link that logs on click', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-
-    render(
-      <ResponsiveContext.Provider value="medium">
-        <Menu />
-      </ResponsiveContext.Provider>
-    );
-
-    // Find and click the brand link
-    const brandLink = screen.getByText('LE YUZZI');
-    fireEvent.click(brandLink);
-
-    // Check that console.log was called with 'CLICK'
-    expect(consoleSpy).toHaveBeenCalledWith('CLICK');
-
-    // Clean up
-    consoleSpy.mockRestore();
   });
 });

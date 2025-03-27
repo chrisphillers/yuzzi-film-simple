@@ -1,6 +1,6 @@
 'use client';
-import { Suspense, lazy, useState } from 'react';
-import { Box, Layer } from 'grommet';
+import { Suspense, lazy, useState, useContext } from 'react';
+import { Box, Layer, ThemeContext } from 'grommet';
 import { VideoStackPlayer } from './ui/videomodal';
 
 // Lazy-load the Vimeo component
@@ -27,6 +27,7 @@ export const Hero = ({ title }: { title: string }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [openVideo, setOpenVideo] = useState(false);
+  const { dark } = useContext(ThemeContext) as { dark: boolean };
   console.info(isLoaded);
 
   return (
@@ -72,23 +73,31 @@ export const Hero = ({ title }: { title: string }) => {
         )}
 
         <Suspense>
-          {/* <Suspense fallback={<VideoSkeleton />}> */}
-          <VimeoPlayer
-            id={title}
-            video="1067064372"
-            // video="76979871"
-            autoplay={true}
-            muted={true}
-            loop={true}
-            controls={false}
-            responsive={true}
-            playsInline={true}
-            transparent={true}
-            background={true}
-            onLoaded={() => setIsLoaded(true)}
-            onError={() => setIsLoaded(true)}
-            dnt={true}
-          />
+          <Box
+            style={{
+              width: '100%',
+              height: '100%',
+              filter: dark ? 'grayscale(100%)' : 'none',
+            }}
+          >
+            {/* <Suspense fallback={<VideoSkeleton />}> */}
+            <VimeoPlayer
+              id={title}
+              video="1067064372"
+              // video="76979871"
+              autoplay={true}
+              muted={true}
+              loop={true}
+              controls={false}
+              responsive={true}
+              playsInline={true}
+              transparent={true}
+              background={true}
+              onLoaded={() => setIsLoaded(true)}
+              onError={() => setIsLoaded(true)}
+              dnt={true}
+            />
+          </Box>
         </Suspense>
       </Box>
 
