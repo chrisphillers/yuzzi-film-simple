@@ -1,0 +1,173 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { Watch } from '../modals/watch';
+import { useScrollTrigger } from '../../app/hooks/useScrollTrigger';
+
+// Mock the useScrollTrigger hook
+jest.mock('../../app/hooks/useScrollTrigger', () => ({
+  useScrollTrigger: jest.fn(),
+}));
+
+describe('Watch Component', () => {
+  // Spy on console.log to avoid polluting test output
+  beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  // Helper function to set up mock scroll values
+  const setupMockScrollValues = (values: {
+    scrollY?: number;
+    viewportHeight?: number;
+    documentHeight?: number;
+    isHalfwayDown?: boolean;
+    isNearBottom?: boolean;
+  }) => {
+    (useScrollTrigger as jest.Mock).mockReturnValue({
+      scrollY: values.scrollY ?? 0,
+      viewportHeight: values.viewportHeight ?? 800,
+      documentHeight: values.documentHeight ?? 2000,
+      isHalfwayDown: values.isHalfwayDown ?? false,
+      isNearBottom: values.isNearBottom ?? false,
+      forceUpdate: jest.fn(),
+      addThreshold: jest.fn(() => jest.fn()),
+      hasReachedThreshold: jest.fn(() => false),
+    });
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should not render when user has not scrolled enough', () => {
+    // Mock values for when user has not scrolled halfway
+    setupMockScrollValues({
+      scrollY: 300, // Less than half viewport height (800/2)
+      viewportHeight: 800,
+      documentHeight: 2000,
+      isHalfwayDown: false,
+      isNearBottom: false,
+    });
+
+    render(<Watch />);
+
+    // Watch component should not be visible
+    expect(screen.queryByText('WATCH')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('watch-button')).not.toBeInTheDocument();
+  });
+
+  test('should render fixed position when scrolled halfway', () => {
+    // Mock values for when user has scrolled halfway down
+    setupMockScrollValues({
+      scrollY: 450, // More than half viewport height (800/2)
+      viewportHeight: 800,
+      documentHeight: 2000,
+      isHalfwayDown: true,
+      isNearBottom: false,
+    });
+
+    const { container } = render(<Watch />);
+
+    // Watch component should be visible
+    expect(screen.getByText('WATCH')).toBeInTheDocument();
+    expect(screen.getByTestId('watch-button')).toBeInTheDocument();
+
+    // Should have fixed position and be at bottom of screen
+    const boxComponent = screen.getByTestId('watch-button');
+    expect(boxComponent).toHaveStyle('position: fixed');
+    expect(boxComponent).toHaveStyle('bottom: 24px');
+  });
+
+  test('should render absolute position when at bottom of page', () => {
+    // Mock values for when user has scrolled to bottom
+    setupMockScrollValues({
+      scrollY: 1150, // Near the bottom (documentHeight - viewportHeight - footerHeight)
+      viewportHeight: 800,
+      documentHeight: 2000,
+      isHalfwayDown: true,
+      isNearBottom: true,
+    });
+
+    render(<Watch />);
+
+    // Watch component should be visible
+    expect(screen.getByText('WATCH')).toBeInTheDocument();
+    expect(screen.getByTestId('watch-button')).toBeInTheDocument();
+
+    // Should have absolute position and be just above footer
+    const boxComponent = screen.getByTestId('watch-button');
+    expect(boxComponent).toHaveStyle('position: absolute');
+    expect(boxComponent).toHaveStyle('bottom: 60px');
+  });
+
+  test('should transition from fixed to absolute when scrolling to bottom', () => {
+    // First render with halfway scroll (fixed position)
+    setupMockScrollValues({
+      scrollY: 500,
+      viewportHeight: 800,
+      documentHeight: 2000,
+      isHalfwayDown: true,
+      isNearBottom: false,
+    });
+
+    const { rerender } = render(<Watch />);
+
+    // Should be fixed position
+    let boxComponent = screen.getByTestId('watch-button');
+    expect(boxComponent).toHaveStyle('position: fixed');
+    expect(boxComponent).toHaveStyle('bottom: 24px');
+
+    // Update to bottom of page (absolute position)
+    setupMockScrollValues({
+      scrollY: 1150,
+      viewportHeight: 800,
+      documentHeight: 2000,
+      isHalfwayDown: true,
+      isNearBottom: true,
+    });
+
+    // Re-render the component
+    rerender(<Watch />);
+
+    // Should now be absolute position
+    boxComponent = screen.getByTestId('watch-button');
+    expect(boxComponent).toHaveStyle('position: absolute');
+    expect(boxComponent).toHaveStyle('bottom: 60px');
+  });
+
+  test('should disappear when scrolling back up', () => {
+    // First render with halfway scroll
+    setupMockScrollValues({
+      scrollY: 500,
+      viewportHeight: 800,
+      documentHeight: 2000,
+      isHalfwayDown: true,
+      isNearBottom: false,
+    });
+
+    const { rerender } = render(<Watch />);
+
+    // Should be visible
+    expect(screen.getByText('WATCH')).toBeInTheDocument();
+    expect(screen.getByTestId('watch-button')).toBeInTheDocument();
+
+    // Update to scroll back up (not at halfway)
+    setupMockScrollValues({
+      scrollY: 300,
+      viewportHeight: 800,
+      documentHeight: 2000,
+      isHalfwayDown: false,
+      isNearBottom: false,
+    });
+
+    // Re-render the component
+    rerender(<Watch />);
+
+    // Should disappear
+    expect(screen.queryByText('WATCH')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('watch-button')).not.toBeInTheDocument();
+  });
+});

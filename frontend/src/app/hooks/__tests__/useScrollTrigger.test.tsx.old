@@ -1,0 +1,408 @@
+import { renderHook, act } from '@testing-library/react';
+import { useScrollTrigger } from '../useScrollTrigger';
+
+describe('useScrollTrigger', () => {
+  // Store originals to restore later
+  let originalScrollY: any;
+  let originalInnerHeight: any;
+  let originalDocumentHeight: any;
+
+  // Mock scroll event
+  const mockScrollEvent = new Event('scroll');
+
+  beforeEach(() => {
+    // Save original values
+    originalScrollY = Object.getOwnPropertyDescriptor(window, 'scrollY');
+    originalInnerHeight = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+    originalDocumentHeight = Object.getOwnPropertyDescriptor(
+      document.documentElement,
+      'scrollHeight'
+    );
+
+    // Mock DOM properties - use defineProperty for proper getters
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 0,
+    });
+
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      value: 800,
+    });
+
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      writable: true,
+      value: 2000,
+    });
+
+    // Skip animation frames for immediate execution
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      cb(0);
+      return 0;
+    });
+  });
+
+  afterEach(() => {
+    // Restore original values if they existed
+    if (originalScrollY) {
+      Object.defineProperty(window, 'scrollY', originalScrollY);
+    }
+    if (originalInnerHeight) {
+      Object.defineProperty(window, 'innerHeight', originalInnerHeight);
+    }
+    if (originalDocumentHeight) {
+      Object.defineProperty(document.documentElement, 'scrollHeight', originalDocumentHeight);
+    }
+
+    jest.restoreAllMocks();
+  });
+
+  test('should initialize with correct values', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Force initial calculation
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.scrollY).toBe(0);
+    expect(result.current.viewportHeight).toBe(800);
+    expect(result.current.documentHeight).toBe(2000);
+    expect(result.current.scrollPercentage).toBe(0);
+    expect(result.current.direction).toBe('none');
+  });
+
+  test('should update values when scrolling down', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Change scroll position
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 500,
+    });
+
+    // Force update with new scroll position
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.scrollY).toBe(500);
+    expect(result.current.scrollPercentage).toBeCloseTo(41.67, 1); // 500 / (2000 - 800) * 100
+    expect(result.current.direction).toBe('down');
+  });
+
+  test('should detect scroll to bottom', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Change scroll position to bottom
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 1200, // 2000 - 800
+    });
+
+    // Force update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.scrollY).toBe(1200);
+    expect(result.current.scrollPercentage).toBe(100);
+  });
+
+  test('should detect scroll direction correctly', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // First scroll down
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 500,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.direction).toBe('down');
+
+    // Then scroll up
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 300,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.direction).toBe('up');
+
+    // No change in scroll position - second update with same value
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.direction).toBe('none');
+  });
+
+  test('should track thresholds correctly', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Add thresholds
+    let cleanupMidpoint: () => void;
+    let cleanupBottom: () => void;
+
+    act(() => {
+      cleanupMidpoint = result.current.addThreshold(400, 'midpoint');
+      cleanupBottom = result.current.addThreshold(1100, 'bottom');
+      // Force update after adding thresholds
+      result.current.forceUpdate();
+    });
+
+    // Initially, no thresholds should be reached
+    expect(result.current.hasReachedThreshold('midpoint')).toBe(false);
+    expect(result.current.hasReachedThreshold('bottom')).toBe(false);
+
+    // Scroll past first threshold but not second
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 500,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('midpoint')).toBe(true);
+    expect(result.current.hasReachedThreshold('bottom')).toBe(false);
+
+    // Scroll past both thresholds
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 1200,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('midpoint')).toBe(true);
+    expect(result.current.hasReachedThreshold('bottom')).toBe(true);
+
+    // Clean up thresholds
+    act(() => {
+      cleanupMidpoint();
+      cleanupBottom();
+    });
+  });
+
+  test('should correctly indicate half-page scroll', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Add a threshold for halfway down viewport
+    let cleanupHalfway: () => void;
+
+    act(() => {
+      cleanupHalfway = result.current.addThreshold(400, 'halfwayDown');
+      // Force update after adding threshold
+      result.current.forceUpdate();
+    });
+
+    // Before halfway
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 300,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('halfwayDown')).toBe(false);
+
+    // Exactly halfway
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 400,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('halfwayDown')).toBe(true);
+
+    // Past halfway
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 500,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('halfwayDown')).toBe(true);
+
+    // Clean up
+    act(() => {
+      cleanupHalfway();
+    });
+  });
+
+  test('should correctly detect near-bottom position', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Define bottom threshold (60px from bottom)
+    const bottomPosition = 1140; // scrollHeight - viewportHeight - footerOffset = 2000 - 800 - 60
+    let cleanupBottom: () => void;
+
+    act(() => {
+      cleanupBottom = result.current.addThreshold(bottomPosition, 'nearBottom');
+      // Force update after adding threshold
+      result.current.forceUpdate();
+    });
+
+    // Not near bottom
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 1000,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('nearBottom')).toBe(false);
+
+    // Just at the threshold
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: bottomPosition,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('nearBottom')).toBe(true);
+
+    // Past the threshold (fully at bottom)
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 1200,
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.hasReachedThreshold('nearBottom')).toBe(true);
+
+    // Clean up
+    act(() => {
+      cleanupBottom();
+    });
+  });
+
+  test('should handle resize events', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Initial values
+    expect(result.current.viewportHeight).toBe(800);
+    expect(result.current.documentHeight).toBe(2000);
+
+    // Change viewport and document dimensions
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      value: 1000,
+    });
+
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      writable: true,
+      value: 2500,
+    });
+
+    // Force update to simulate resize
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Values should update
+    expect(result.current.viewportHeight).toBe(1000);
+    expect(result.current.documentHeight).toBe(2500);
+  });
+
+  test('should provide isHalfwayDown and isNearBottom helpers', () => {
+    const { result } = renderHook(() => useScrollTrigger({ debug: false }));
+
+    // Initial update
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    // Both should be false initially
+    expect(result.current.isHalfwayDown).toBe(false);
+    expect(result.current.isNearBottom).toBe(false);
+
+    // Scroll halfway down
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 500, // More than half of viewport (800/2)
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.isHalfwayDown).toBe(true);
+    expect(result.current.isNearBottom).toBe(false);
+
+    // Scroll to bottom
+    Object.defineProperty(window, 'scrollY', {
+      writable: true,
+      value: 1140, // 2000 - 800 - 60
+    });
+
+    act(() => {
+      result.current.forceUpdate();
+    });
+
+    expect(result.current.isHalfwayDown).toBe(true);
+    expect(result.current.isNearBottom).toBe(true);
+  });
+});
