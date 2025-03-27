@@ -1,4 +1,4 @@
-import { Heading, Page } from 'grommet';
+import { Heading, Page, Box } from 'grommet';
 import { getAbout } from '@/lib/data';
 // import { Metadata } from 'next';
 import { FilmSubmissionForm } from '../about/components';
@@ -28,13 +28,15 @@ const { nav } = await getAbout();
 export default async function Submit() {
   return (
     <section>
-      <Heading level={2} margin="none" textAlign="center">
-        SUBMIT A FILM
-      </Heading>
-      <Page kind="narrow" width={'small'}>
-        {/* @ts-expect-error: Typescript error - just a placeholder so no need to fix now */}
-        <FilmSubmissionForm content={nav[0].content}></FilmSubmissionForm>
-      </Page>
+      <Box align="center" margin={{ top: 'large' }}>
+        <Heading level={2} margin="none" textAlign="center">
+          SUBMIT A FILM
+        </Heading>
+        <Page kind="narrow" width={'small'}>
+          {/* @ts-expect-error: Typescript error - just a placeholder so no need to fix now */}
+          <FilmSubmissionForm content={nav[0].content}></FilmSubmissionForm>
+        </Page>
+      </Box>
     </section>
   );
 }

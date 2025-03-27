@@ -1,6 +1,6 @@
 import { getAbout } from '@/lib/data';
 import { Carousel, Copy, AboutNav, Contact } from './components';
-import { Page, PageContent } from 'grommet';
+import { Page, PageContent, Box } from 'grommet';
 
 // const CONTENT_WIDTH_PROPS: BoxExtendedProps = {
 //   width: { max: '1200px' },
@@ -17,16 +17,18 @@ export default async function About() {
 
   return (
     <section>
-      <Page kind="narrow">
-        <PageContent gap={'xlarge'}>
-          {/* TODO: Sort html/Grommet semantics paragraph/page etc */}
+      <Box align="center" margin={{ vertical: 'large' }}>
+        <Page kind="narrow">
+          <PageContent gap={'xlarge'}>
+            {/* TODO: Sort html/Grommet semantics paragraph/page etc */}
 
-          <Copy content={content}></Copy>
-          <Carousel></Carousel>
-          <Contact></Contact>
-          <AboutNav aboutUsNav={nav}></AboutNav>
-        </PageContent>
-      </Page>
+            <Copy content={content}></Copy>
+            <Carousel></Carousel>
+            <Contact></Contact>
+            <AboutNav aboutUsNav={nav}></AboutNav>
+          </PageContent>
+        </Page>
+      </Box>
     </section>
   );
 }
