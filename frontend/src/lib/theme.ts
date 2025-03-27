@@ -33,17 +33,20 @@ const customTheme: ThemeType = {
     },
     font: {
       family: 'var(--font-geist-sans)',
-      size: '14px',
+      size: '16px',
       height: '20px',
     },
   },
+  heading: { level: { 4: { medium: { size: '19px' } } } },
   anchor: {
     color: { dark: 'white', light: 'black' },
-    // size: { medium: { fontWeight: 3,  } },
+    size: { medium: { fontWeight: 400 } },
     hover: {
       textDecoration: 'none',
+      //  extend: 'text-underline-offset: 4px;'
       extend: 'color: blue;',
     },
+    extend: 'font-size: 19px; text-underline-offset: 5px;',
   },
 };
 

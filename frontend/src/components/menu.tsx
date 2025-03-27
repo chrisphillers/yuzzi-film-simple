@@ -21,7 +21,7 @@ const menuItems = [
   { name: 'ARTICLES', href: '/articles' },
   { name: 'ARCHIVES', href: '/archives' },
   { name: 'ABOUT', href: '/about' },
-  { name: 'SUBMIT A FILM', href: '/submit' },
+  { name: 'SUBMIT', href: '/submit' },
 ];
 
 const socialItems = [
@@ -66,7 +66,7 @@ export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
           <>
             {showSidebar && <MobileMenu onClose={() => setShowSidebar(false)}></MobileMenu>}
             <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
-              <BrandLink align={'center'} />
+              <YuzziHeading label="LE YUZZI" align={'center'} weight="heavy" href="/" />
               <Box style={{ position: 'absolute', right: 0 }}>
                 <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
               </Box>
@@ -83,7 +83,7 @@ export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
             areas={[['brand', 'menu', 'newsletter']]}
             align="center"
           >
-            <BrandLink align={'left'} />
+            <YuzziHeading align={'left'} label="LE YUZZI" href="/" weight="heavy" />
             <Box gridArea="menu" align="center">
               <Nav direction="row" gap="medium">
                 {menuItems.map((item) => (
@@ -114,11 +114,37 @@ export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
   );
 };
 
-const BrandLink = ({ align }: { align: 'center' | 'left' }) => {
+export const YuzziHeading = ({
+  align,
+  color,
+  href,
+  label,
+  weight,
+}: {
+  align: 'center' | 'left';
+  color?: string;
+  href: string;
+  label: string;
+  weight?: 'heavy';
+}) => {
   return (
-    <Box width="100%" align={align} gridArea="brand">
-      <Link href="/" passHref legacyBehavior>
-        <Anchor label="LE YUZZI" size="medium" data-testid="brandLink" />
+    <Box
+      width="100%"
+      align={align}
+      gridArea="brand"
+      data-testid="brand-link"
+      style={{ cursor: 'pointer' }}
+    >
+      <Link href={href} passHref legacyBehavior>
+        <Heading
+          level={4}
+          margin="none"
+          label={label}
+          weight={weight === 'heavy' ? 800 : 400}
+          color={color}
+        >
+          {label}
+        </Heading>
       </Link>
     </Box>
   );

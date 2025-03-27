@@ -17,7 +17,7 @@ export const Footer = ({ gridArea, ...rest }: { gridArea: string }) => {
       pad="small"
       direction="row"
       justify="center"
-      margin={{ top: 'medium' }}
+      margin={{ top: 'lareg' }}
       {...rest}
     >
       <Box direction="row" gap="medium" id="socialmedia">

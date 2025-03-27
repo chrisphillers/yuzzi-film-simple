@@ -1,5 +1,5 @@
 'use client';
-import { Box, Button, Form, FormField, TextInput, Anchor, Text } from 'grommet';
+import { Box, Button, Form, FormField, TextInput, Text, Heading } from 'grommet';
 import { useNewsletterValidation } from '../../app/hooks/useNewsletter';
 
 interface NewsletterProps {
@@ -24,9 +24,22 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
       <Form value={formValue} onChange={setFormValue} validate="submit" onSubmit={handleSubmit}>
         <Box direction="row" align="center" justify="between" width="100%">
           <Box align="start">
-            <Anchor size="medium" onClick={() => alert('click')} data-testid="brand-link">
+            <Heading
+              level={4}
+              margin="none"
+              weight={800}
+              onClick={() => alert('click')}
+              data-testid="brand-link"
+            >
               LE YUZZI
-            </Anchor>
+            </Heading>
+            {/* <YuzziHeading
+              label="LE YUZZI"
+              align={'center'}
+              weight="heavy"
+              href="/"
+              data-testid="brand-link"
+            /> */}
           </Box>
 
           <Box direction="row" align="center" justify="center" flex="grow" height="40px">
@@ -45,7 +58,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
                 </Text>
               </Box>
             ) : (
-              <Box direction="row" align="center" height="40px">
+              <Box direction="row" align="center">
                 <FormField name="email" margin="none" htmlFor="email">
                   <TextInput
                     size="medium"
@@ -79,7 +92,6 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
                   style={{
                     fontWeight: 'light',
                     fontSize: '18px',
-                    color: 'black',
                     height: '100%',
                   }}
                 />
@@ -92,7 +104,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
               size="medium"
               label="CANCEL"
               data-testid="cancel-button"
-              style={{ fontWeight: 'light', fontSize: '18px', color: 'black' }}
+              style={{ fontWeight: 'light', fontSize: '19px' }}
               onClick={handleCancel}
             />
           </Box>

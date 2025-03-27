@@ -55,8 +55,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             rows={['xxsmall', 'auto', 'xxsmall']}
             columns={['auto']}
             areas={[['header'], ['main'], ['footer']]}
-            gap="small"
             tabIndex={0}
+            margin={{ top: 'medium' }}
           >
             <Menu gridArea="header" />
             <Box {...CONTENT_WIDTH_PROPS} gridArea="main">

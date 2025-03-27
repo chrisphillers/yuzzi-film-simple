@@ -52,7 +52,7 @@ describe('Menu', () => {
       expect(screen.getByText('ARTICLES')).toBeInTheDocument();
       expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
-      expect(screen.getByText('SUBMIT A FILM')).toBeInTheDocument();
+      expect(screen.getByText('SUBMIT')).toBeInTheDocument();
 
       // Check for newsletter link
       expect(screen.getByText('NEWSLETTER')).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe('Menu', () => {
       expect(screen.queryByText('ARTICLES')).not.toBeInTheDocument();
       expect(screen.queryByText('ARCHIVES')).not.toBeInTheDocument();
       expect(screen.queryByText('ABOUT')).not.toBeInTheDocument();
-      expect(screen.queryByText('SHOP')).not.toBeInTheDocument();
+      expect(screen.queryByText('SUBMIT')).not.toBeInTheDocument();
       expect(screen.queryByText('NEWSLETTER')).not.toBeInTheDocument();
     });
 
@@ -100,7 +100,7 @@ describe('Menu', () => {
       expect(screen.getByText('ARTICLES')).toBeInTheDocument();
       expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
-      expect(screen.getByText('SUBMIT A FILM')).toBeInTheDocument();
+      expect(screen.getByText('SUBMIT')).toBeInTheDocument();
       expect(screen.getByText('NEWSLETTER')).toBeInTheDocument();
     });
   });
@@ -127,7 +127,7 @@ describe('Menu', () => {
       expect(screen.queryByText('ARTICLES')).not.toBeInTheDocument();
       expect(screen.queryByText('ARCHIVES')).not.toBeInTheDocument();
       expect(screen.queryByText('ABOUT')).not.toBeInTheDocument();
-      expect(screen.queryByText('SHOP')).not.toBeInTheDocument();
+      expect(screen.queryByText('SUBMIT')).not.toBeInTheDocument();
       expect(screen.queryByText('NEWSLETTER')).not.toBeInTheDocument();
 
       // Newsletter should not be visible
