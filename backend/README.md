@@ -4,5 +4,5 @@ blank
 
 ## Attributes
 
-- **Database**: mongodb
+- **Database**: postGres
 - **Storage Adapter**: localDisk
