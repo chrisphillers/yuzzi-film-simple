@@ -12,29 +12,31 @@ export default async function Home() {
 
   return (
     <section>
-      <Box margin={{ top: 'medium' }}>
-        <Box height="100vh">
-          <Hero title={film.title} />
+      <Box>
+        <Box height="calc(100vh - 150px)" justify="center">
+          <Box>
+            <Hero title={film.title} />
 
-          {/* TODO: Sort html/Grommet semantics paragraph/page etc */}
+            {/* TODO: Sort html/Grommet semantics paragraph/page etc */}
 
-          <Paragraph margin={{ vertical: 'medium' }} fill>
-            <Text weight="bold">LUTTE JEUNESSE</Text> a film by{' '}
-            <Text weight="bold">THIERRY DE PERETTI</Text>. 2018. 55 min. A simple casting process
-            becomes a sociological inquiry into Corsican nationalism in this short film by the
-            acclaimed French filmmaker.
-          </Paragraph>
+            <Paragraph margin={{ vertical: 'medium' }} fill>
+              <Text weight="bold">LUTTE JEUNESSE</Text> a film by{' '}
+              <Text weight="bold">THIERRY DE PERETTI</Text>. 2018. 55 min. A simple casting process
+              becomes a sociological inquiry into Corsican nationalism in this short film by the
+              acclaimed French filmmaker.
+            </Paragraph>
 
-          <Box align="end" margin={{ vertical: 'small' }}>
-            <Anchor
-              style={{
-                textDecoration: 'underline',
+            <Box align="end" margin={{ vertical: 'small' }}>
+              <Anchor
+                style={{
+                  textDecoration: 'underline',
 
-                fontWeight: '400',
-              }}
-            >
-              READ MORE
-            </Anchor>
+                  fontWeight: '400',
+                }}
+              >
+                READ MORE
+              </Anchor>
+            </Box>
           </Box>
         </Box>
         <Box alignContent="center" justify="center" align="center">
