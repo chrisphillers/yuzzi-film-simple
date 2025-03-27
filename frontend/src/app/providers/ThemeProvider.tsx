@@ -6,6 +6,7 @@ import { Grommet } from 'grommet';
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 import { grommetTheme, cssVariables } from '../../lib/theme';
 import { useInactivityDetector } from '../hooks/useInactivityDetector';
+import { ThemeFlasher } from './themeFlash';
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [styledComponentsStyleSheet] = useState(() => new ServerStyleSheet());
@@ -38,6 +39,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     return (
       <Grommet theme={grommetTheme} full themeMode={dark ? 'dark' : 'light'}>
         {children}
+        <ThemeFlasher />
+        {/* {flash && <FlashyTransition isActive={flash} randomColor={color}></FlashyTransition>} */}
       </Grommet>
     );
   }
@@ -47,6 +50,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
       <Grommet theme={grommetTheme} full themeMode={dark ? 'dark' : 'light'}>
         {children}
+        <ThemeFlasher />
       </Grommet>
     </StyleSheetManager>
   );
