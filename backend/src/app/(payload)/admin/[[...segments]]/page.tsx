@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 
 import config from '@payload-config';
 import { RootPage, generatePageMetadata } from '@payloadcms/next/views';
+// @ts-ignore
 import { importMap } from '../importMap';
 
 type Args = {

@@ -1,12 +1,11 @@
-import { headers as getHeaders } from 'next/headers.js';
-import Image from 'next/image';
+// import Image from 'next/image';
 import React from 'react';
 import { fileURLToPath } from 'url';
+import { Metadata } from 'next';
 
 import './styles.css';
 
 export default async function HomePage() {
-  const headers = await getHeaders();
   const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`;
 
   return (
@@ -14,12 +13,12 @@ export default async function HomePage() {
       <div className="content">
         <picture>
           <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
+          {/* <Image
             alt="Payload Logo"
             height={65}
             src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg"
             width={65}
-          />
+          /> */}
         </picture>
         <h1>Welcome to your new project.</h1>
         <div className="links">
@@ -44,4 +43,11 @@ export default async function HomePage() {
       </div>
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Yuzzi Film',
+    description: 'Yuzzi Film',
+  };
 }
