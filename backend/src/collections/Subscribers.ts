@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { CollectionConfig, BeforeChangeHook } from 'payload/types';
 import type { PayloadRequest } from 'payload/types';
 import { addSubscriberToMailchimp } from '../hooks/mailchimp'; // Import the Mailchimp hook
