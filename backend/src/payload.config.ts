@@ -20,15 +20,29 @@ import emailAdapter from './email/sesAdapter';
 const filename = fileURLToPath(import.meta.url);
 const dirname = pathDirname(filename);
 
-// Add error logging
-const logError = (error: Error) => {
-  console.error('Payload CMS Error:', {
+interface PayloadError extends Error {
+  code?: string;
+  statusCode?: number;
+  data?: unknown;
+}
+
+const logError = (error: PayloadError) => {
+  const errorContext = {
     message: error.message,
     stack: error.stack,
-    code: (error as any).code,
+    code: error.code,
+    statusCode: error.statusCode,
+    data: error.data,
     timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+  };
+
+  console.error('Payload CMS Error:', errorContext);
+
+  Sentry.withScope((scope) => {
+    scope.setExtras(errorContext);
+    Sentry.captureException(error);
   });
-  Sentry.captureException(error);
 };
 
 export default buildConfig({
