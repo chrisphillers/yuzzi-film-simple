@@ -1,5 +1,17 @@
-import type { CollectionConfig } from 'payload/types'
-import type { PayloadRequest } from 'payload/types'
+import type { CollectionConfig, BeforeChangeHook } from 'payload/types';
+import type { PayloadRequest } from 'payload/types';
+import { addSubscriberToMailchimp } from '../hooks/mailchimp'; // Import the Mailchimp hook
+
+interface SubscriberData {
+  email: string;
+  source?: string;
+}
+
+interface BeforeChangeHookArgs {
+  data: SubscriberData;
+  req: PayloadRequest;
+  operation: 'create' | 'update' | 'delete';
+}
 
 export const Subscribers: CollectionConfig = {
   slug: 'subscribers',
@@ -37,4 +49,18 @@ export const Subscribers: CollectionConfig = {
       defaultValue: 'website-newsletter',
     },
   ],
-}
+  hooks: {
+    beforeChange: [
+      (async ({ data, req, operation }: BeforeChangeHookArgs) => {
+        // Only trigger Mailchimp API call for new subscribers (when creating)
+        if (operation === 'create') {
+          const success = await addSubscriberToMailchimp(data.email, req.payload);
+          if (!success) {
+            throw new Error('Failed to add subscriber to Mailchimp.');
+          }
+        }
+        return data;
+      }) as BeforeChangeHook,
+    ],
+  },
+};
