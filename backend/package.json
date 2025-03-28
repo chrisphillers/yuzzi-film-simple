@@ -19,6 +19,7 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.777.0",
     "@mailchimp/mailchimp_marketing": "^3.0.80",
+    "@netlify/plugin-nextjs": "^5.10.1",
     "@payloadcms/db-postgres": "latest",
     "@payloadcms/next": "latest",
     "@payloadcms/payload-cloud": "latest",
