@@ -3,8 +3,8 @@ import { Payload } from 'payload';
 
 // Initialize Mailchimp client
 mailchimp.setConfig({
-  apiKey: process.env.MAILCHIMP_API_KEY || '',
-  server: process.env.MAILCHIMP_SERVER_PREFIX || '',
+  apiKey: process.env.YUZZI_MAILCHIMP_API_KEY || '',
+  server: process.env.YUZZI_MAILCHIMP_SERVER_PREFIX || '',
 });
 
 // Function to add a subscriber to Mailchimp
@@ -13,9 +13,9 @@ export const addSubscriberToMailchimp = async (
   payload: Payload
 ): Promise<boolean> => {
   try {
-    const listId = process.env.MAILCHIMP_LIST_ID;
+    const listId = process.env.YUZZI_MAILCHIMP_LIST_ID;
     if (!listId) {
-      throw new Error('MAILCHIMP_LIST_ID is not defined');
+      throw new Error('YUZZI_MAILCHIMP_LIST_ID is not defined');
     }
 
     // Send confirmation email
@@ -25,14 +25,14 @@ export const addSubscriberToMailchimp = async (
       html: `
         <h1>Welcome to Le Yuzzi!</h1>
         <p>Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:</p>
-        <p><a href="${process.env.FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}">Confirm Subscription</a></p>
+        <p><a href="${process.env.YUZZI_FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}">Confirm Subscription</a></p>
       `,
       text: `
         Welcome to Le Yuzzi!
         
         Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:
         
-        ${process.env.FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}
+        ${process.env.YUZZI_FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}
       `,
     });
 
@@ -44,8 +44,31 @@ export const addSubscriberToMailchimp = async (
 
     console.log('Subscriber added to Mailchimp:', response);
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to add subscriber to Mailchimp:', error);
-    return false;
+
+    // Handle specific Mailchimp errors
+    if (error && typeof error === 'object' && 'response' in error) {
+      const mailchimpError = error as { response?: { body?: { title?: string }; status?: number } };
+
+      if (mailchimpError.response?.body?.title === 'Member Exists') {
+        throw new Error('This email address is already subscribed to our newsletter.');
+      }
+
+      if (mailchimpError.response?.body?.title === 'Invalid Resource') {
+        throw new Error('Invalid email address format.');
+      }
+
+      if (mailchimpError.response?.status === 401) {
+        throw new Error('Mailchimp API authentication failed. Please contact support.');
+      }
+
+      if (mailchimpError.response?.status === 404) {
+        throw new Error('Newsletter list not found. Please contact support.');
+      }
+    }
+
+    // Generic error for other cases
+    throw new Error('Failed to add subscriber to newsletter. Please try again later.');
   }
 };

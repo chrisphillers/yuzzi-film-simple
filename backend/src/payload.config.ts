@@ -10,13 +10,10 @@ import sharp from 'sharp';
 import { Users } from './collections/Users';
 import { Media } from './collections/Media';
 import { Subscribers } from './collections/Subscribers';
-import { sesAdapter } from './email/sesAdapter';
+import emailAdapter from './email/sesAdapter';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
-
-// Get frontend URL from environment variable
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 export default buildConfig({
   admin: {
@@ -27,13 +24,13 @@ export default buildConfig({
   },
   collections: [Users, Media, Subscribers],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.YUZZI_PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || '',
+      connectionString: process.env.YUZZI_DATABASE_URI || '',
     },
   }),
   sharp,
@@ -41,7 +38,13 @@ export default buildConfig({
     payloadCloudPlugin(),
     // storage-adapter-placeholder
   ],
-  email: sesAdapter(),
-  cors: [FRONTEND_URL], // Use environment variable for CORS
-  csrf: [FRONTEND_URL], // Use environment variable for CSRF
+  email: emailAdapter,
+  cors:
+    process.env.NODE_ENV === 'production'
+      ? [process.env.YUZZI_FRONTEND_URL || 'https://yuzzi.com']
+      : '*', // Allow all origins in development
+  csrf:
+    process.env.NODE_ENV === 'production'
+      ? [process.env.YUZZI_FRONTEND_URL || 'https://yuzzi.com']
+      : [], // Disable CSRF in development
 });

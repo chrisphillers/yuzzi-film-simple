@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/graphql',
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/graphql`,
+      },
+    ];
+  },
 };
 
 // TODO Complete for SEO - think about LLMs

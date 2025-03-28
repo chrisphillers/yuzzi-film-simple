@@ -54,9 +54,14 @@ export const Subscribers: CollectionConfig = {
       (async ({ data, req, operation }: BeforeChangeHookArgs) => {
         // Only trigger Mailchimp API call for new subscribers (when creating)
         if (operation === 'create') {
-          const success = await addSubscriberToMailchimp(data.email, req.payload);
-          if (!success) {
-            throw new Error('Failed to add subscriber to Mailchimp.');
+          try {
+            const success = await addSubscriberToMailchimp(data.email, req.payload);
+            if (!success) {
+              throw new Error('Failed to add subscriber to Mailchimp.');
+            }
+          } catch (error) {
+            // Propagate the specific error message from Mailchimp
+            throw error;
           }
         }
         return data;

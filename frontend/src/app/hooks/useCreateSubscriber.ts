@@ -18,8 +18,8 @@ const CREATE_SUBSCRIBER_MUTATION = `
   }
 `;
 
-// Adjust if Payload backend is on a different URL
-const GRAPHQL_ENDPOINT = process.env.NEXT_PUBLIC_PAYLOAD_API_URL || '/api/graphql';
+// Use the proxied endpoint
+const GRAPHQL_ENDPOINT = '/api/graphql';
 
 export const useCreateSubscriber = (): UseCreateSubscriberReturn => {
   const [loading, setLoading] = useState<boolean>(false);
