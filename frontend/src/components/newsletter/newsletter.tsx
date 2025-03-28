@@ -149,7 +149,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
           </Box>
         </Box>
 
-        TODO: Sort styling
+        {/* TODO: Sort styling */}
         {submissionStatusMessage && (
           <Box pad={{ vertical: 'small' }} align="center">
             <Text color="status-error" size="small" data-testid="submission-error-text">

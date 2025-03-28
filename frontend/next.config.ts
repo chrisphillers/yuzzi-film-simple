@@ -7,12 +7,21 @@ const nextConfig: NextConfig = {
   },
   images: {
     unoptimized: false,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.screenslate.com',
+        port: '', // Leave empty for default HTTPS port (443)
+        pathname: '/**', // Allows any path under the hostname
+      },
+    ],
   },
 };
 
-//TODO Complete for SEO - think about LLMs
+// TODO Complete for SEO - think about LLMs
 
 module.exports = {
+  ...nextConfig, // Spread the nextConfig object to include its properties
   async headers() {
     return [
       {

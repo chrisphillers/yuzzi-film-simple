@@ -18,10 +18,10 @@ export function FilmArticleContent({ article }: FilmArticleContentProps) {
       ))}
       {/* TODO: Replace with Grommet when fixed */}
       <Image
-        src="/yuzzi-test.png"
+        src="https://www.screenslate.com/sites/default/files/2023-02/irreversible-straight-cut_1280x720.png"
         objectFit="cover"
-        width={530}
-        height={300}
+        width={626}
+        height={360}
         alt="Picture of the author"
       />
       {article.quotes.map((quote, index) => (

@@ -30,46 +30,53 @@ export const useCreateSubscriber = (): UseCreateSubscriberReturn => {
     setError(null);
 
     try {
+      const requestBody = {
+        query: CREATE_SUBSCRIBER_MUTATION,
+        variables: { email },
+      };
+
       const response = await fetch(GRAPHQL_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Add authentication headers here if your 'create' access control
-          // for the subscribers collection requires it. Currently it's public.
+          Accept: 'application/json',
         },
-        body: JSON.stringify({
-          query: CREATE_SUBSCRIBER_MUTATION,
-          variables: { email },
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
 
-      if (!response.ok || result.errors) {
-        const errorMessage = result.errors
-          ? result.errors[0].message
-          : `Failed to submit email. Status: ${response.status}`;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      if (result.errors) {
+        console.error('GraphQL Errors:', result.errors);
+        const errorMessage = result.errors[0]?.message || 'Unknown GraphQL error';
+
         // Check for unique constraint violation specifically
         if (
-          result.errors &&
           result.errors[0]?.extensions?.code === 'INTERNAL_SERVER_ERROR' &&
           /unique constraint/i.test(result.errors[0].message)
         ) {
           throw new Error('This email address is already subscribed.');
         }
+
         throw new Error(errorMessage);
       }
 
-      console.log('Subscriber creation initiated:', result.data);
       setLoading(false);
       return true;
     } catch (err) {
+      console.error('Full error object:', err);
       let apiError: ApiError;
+
       if (err instanceof Error) {
         apiError = { message: err.message };
       } else {
         apiError = { message: 'An unknown submission error occurred.' };
       }
+
       setError(apiError);
       console.error('Failed to create subscriber:', apiError);
       setLoading(false);

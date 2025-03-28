@@ -44,9 +44,27 @@ export const Contact = () => (
 export const Carousel = () => (
   <Box width="large" overflow="hidden" align="center">
     <GrommetCarousel fill controls={false} play={3000}>
-      <Image height="400" width="800" objectFit="cover" alt="test" src="/yuzzi-test.png" />
-      <Image height="400" width="800" objectFit="cover" alt="test" src="/yuzzi-test.png" />
-      <Image height="400" width="800" objectFit="cover" alt="test" src="/yuzzi-test.png" />
+      <Image
+        height="400"
+        width="800"
+        objectFit="cover"
+        alt="test"
+        src="https://www.screenslate.com/sites/default/files/2023-02/irreversible-straight-cut_1280x720.png"
+      />
+      <Image
+        height="400"
+        width="800"
+        objectFit="cover"
+        alt="test"
+        src="https://www.screenslate.com/sites/default/files/2023-02/irreversible-straight-cut_1280x720.png"
+      />
+      <Image
+        height="400"
+        width="800"
+        objectFit="cover"
+        alt="test"
+        src="https://www.screenslate.com/sites/default/files/2023-02/irreversible-straight-cut_1280x720.png"
+      />
       {/* <GrommetImage fit="cover" src="/yuzzi-test.png" />
       <GrommetImage fit="cover" src="/yuzzi-test.png" />
       <GrommetImage fit="cover" src="/yuzzi-test.png" /> */}
