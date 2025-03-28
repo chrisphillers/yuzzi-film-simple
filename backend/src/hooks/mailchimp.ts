@@ -68,6 +68,11 @@ export const addSubscriberToMailchimp = async (
       }
     }
 
+    // If it's the missing list ID error, rethrow it
+    if (error instanceof Error && error.message === 'YUZZI_MAILCHIMP_LIST_ID is not defined') {
+      throw error;
+    }
+
     // Generic error for other cases
     throw new Error('Failed to add subscriber to newsletter. Please try again later.');
   }
