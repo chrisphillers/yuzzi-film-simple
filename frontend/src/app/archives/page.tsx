@@ -143,7 +143,7 @@ export default async function Archives() {
 
 // ArchiveItem component with proper typing
 const ArchiveItem: React.FC<{ directorInfo: Director }> = ({ directorInfo }) => {
-  const { director, link } = directorInfo;
+  const { director } = directorInfo;
   return (
     <Box
       align="center"
