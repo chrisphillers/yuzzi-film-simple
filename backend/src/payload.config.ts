@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname as pathDirname, resolve } from 'path';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
+import * as Sentry from '@sentry/nextjs';
 
 // @ts-ignore
 import { Users } from './collections/Users';
@@ -18,6 +19,17 @@ import emailAdapter from './email/sesAdapter';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = pathDirname(filename);
+
+// Add error logging
+const logError = (error: Error) => {
+  console.error('Payload CMS Error:', {
+    message: error.message,
+    stack: error.stack,
+    code: (error as any).code,
+    timestamp: new Date().toISOString(),
+  });
+  Sentry.captureException(error);
+};
 
 export default buildConfig({
   admin: {
