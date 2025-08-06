@@ -55,20 +55,20 @@ jobs:
       #   working-directory: backend
       #   run: npm run backend:test
 
-      - name: Set up Sentry CLI
-        run: |
-          curl -sL https://sentry.io/get-cli/ | bash
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      # - name: Set up Sentry CLI
+      #   run: |
+      #     curl -sL https://sentry.io/get-cli/ | bash
+      #   env:
+      #     SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
-      - name: Create Sentry Release for Backuend
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'  # Only run on push to master
-        working-directory: backend
-        run: |
-          export SENTRY_ORG=your-org-slug
-          export SENTRY_PROJECT=your-project-slug
-          sentry-cli releases new "1.0.0"
-          sentry-cli releases set-commits "1.0.0" --auto
-          sentry-cli releases finalize "1.0.0"
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      # - name: Create Sentry Release for Backuend
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'  # Only run on push to master
+      #   working-directory: backend
+      #   run: |
+      #     export SENTRY_ORG=your-org-slug
+      #     export SENTRY_PROJECT=your-project-slug
+      #     sentry-cli releases new "1.0.0"
+      #     sentry-cli releases set-commits "1.0.0" --auto
+      #     sentry-cli releases finalize "1.0.0"
+      #   env:
+      #     SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
