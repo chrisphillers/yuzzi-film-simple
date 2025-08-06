@@ -86,7 +86,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
               onClick={() => alert('click')}
               data-testid="brand-link"
             >
-              LE YUZZI
+              YUZZI
             </Heading>
             {/* <YuzziHeading
               label="LE YUZZI"
