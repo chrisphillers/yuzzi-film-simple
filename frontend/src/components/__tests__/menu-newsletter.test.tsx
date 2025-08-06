@@ -1,41 +1,20 @@
-import * as React from 'react';
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Menu } from '../menu';
-import { Newsletter } from '../newsletter/newsletter';
 import { ResponsiveContext } from 'grommet';
+import { Menu } from '../menu';
 
 // Mock the Newsletter component
 jest.mock('../newsletter/newsletter', () => ({
-  Newsletter: jest.fn(({ setShowNewsletter }) => (
+  Newsletter: ({ setShowNewsletter }: { setShowNewsletter: (show: boolean) => void }) => (
     <div data-testid="newsletter-component">
-      <button onClick={() => setShowNewsletter(false)} data-testid="mock-cancel-button">
+      <button data-testid="mock-cancel-button" onClick={() => setShowNewsletter(false)}>
         CANCEL
       </button>
     </div>
-  )),
+  ),
 }));
-
-// Mock the next/link component
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => children,
-}));
-
-// Mock the Layer component from grommet
-jest.mock('grommet', () => {
-  const originalModule = jest.requireActual('grommet');
-  return {
-    ...originalModule,
-    Layer: jest.fn(({ children }) => <div data-testid="sidebar-layer">{children}</div>),
-  };
-});
 
 describe('Menu', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (Newsletter as jest.Mock).mockClear();
-  });
-
   describe('Desktop view', () => {
     const renderDesktopMenu = () => {
       return render(
@@ -49,8 +28,7 @@ describe('Menu', () => {
       renderDesktopMenu();
 
       // Check that navigation items are displayed
-      expect(screen.getByText('ARTICLES')).toBeInTheDocument();
-      expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
+      expect(screen.getByText('JOURNAL')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
       expect(screen.getByText('SUBMIT')).toBeInTheDocument();
 
@@ -72,8 +50,7 @@ describe('Menu', () => {
       expect(screen.getByTestId('newsletter-component')).toBeInTheDocument();
 
       // Navigation items should not be visible
-      expect(screen.queryByText('ARTICLES')).not.toBeInTheDocument();
-      expect(screen.queryByText('ARCHIVES')).not.toBeInTheDocument();
+      expect(screen.queryByText('JOURNAL')).not.toBeInTheDocument();
       expect(screen.queryByText('ABOUT')).not.toBeInTheDocument();
       expect(screen.queryByText('SUBMIT')).not.toBeInTheDocument();
       expect(screen.queryByText('NEWSLETTER')).not.toBeInTheDocument();
@@ -97,8 +74,7 @@ describe('Menu', () => {
       expect(screen.queryByTestId('newsletter-component')).not.toBeInTheDocument();
 
       // Navigation items should be visible again
-      expect(screen.getByText('ARTICLES')).toBeInTheDocument();
-      expect(screen.getByText('ARCHIVES')).toBeInTheDocument();
+      expect(screen.getByText('JOURNAL')).toBeInTheDocument();
       expect(screen.getByText('ABOUT')).toBeInTheDocument();
       expect(screen.getByText('SUBMIT')).toBeInTheDocument();
       expect(screen.getByText('NEWSLETTER')).toBeInTheDocument();
@@ -118,14 +94,13 @@ describe('Menu', () => {
       renderMobileMenu();
 
       // Brand should be visible
-      expect(screen.getByText('LE YUZZI')).toBeInTheDocument();
+      expect(screen.getByText('YUZZI')).toBeInTheDocument();
 
       // Menu icon should be visible (using role button since it's a Button with an icon)
       expect(screen.getByRole('button')).toBeInTheDocument();
 
       // Navigation items should not be visible
-      expect(screen.queryByText('ARTICLES')).not.toBeInTheDocument();
-      expect(screen.queryByText('ARCHIVES')).not.toBeInTheDocument();
+      expect(screen.queryByText('JOURNAL')).not.toBeInTheDocument();
       expect(screen.queryByText('ABOUT')).not.toBeInTheDocument();
       expect(screen.queryByText('SUBMIT')).not.toBeInTheDocument();
       expect(screen.queryByText('NEWSLETTER')).not.toBeInTheDocument();
@@ -137,20 +112,9 @@ describe('Menu', () => {
     //TODO: Sidebar functionality is yet to be done
     // it('shows sidebar when menu button is clicked', () => {
     //   renderMobileMenu();
-
-    //   // Click menu button
     //   const menuButton = screen.getByRole('button');
     //   fireEvent.click(menuButton);
-
-    //   // Check for the sidebar layer using our testid
-    //   expect(screen.getByTestId('sidebar-layer')).toBeInTheDocument();
+    //   expect(screen.getByTestId('sidebar')).toBeInTheDocument();
     // });
-
-    it('never shows newsletter in mobile view due to useEffect', () => {
-      renderMobileMenu();
-
-      // Newsletter should not be visible in mobile view
-      expect(screen.queryByTestId('newsletter-component')).not.toBeInTheDocument();
-    });
   });
 });

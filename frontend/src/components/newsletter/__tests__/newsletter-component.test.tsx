@@ -1,11 +1,16 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { useNewsletterValidation } from '../../../app/hooks/useNewsletter';
+import { useCreateSubscriber } from '../../../app/hooks/useCreateSubscriber';
 import { Newsletter } from '../newsletter';
 
-// Mock the custom hook
+// Mock the custom hooks
 jest.mock('../../../app/hooks/useNewsletter', () => ({
   useNewsletterValidation: jest.fn(),
+}));
+
+jest.mock('../../../app/hooks/useCreateSubscriber', () => ({
+  useCreateSubscriber: jest.fn(),
 }));
 
 // Mock setTimeout to use fake timers
@@ -15,36 +20,53 @@ describe('Newsletter Component', () => {
   const mockSetShowNewsletter = jest.fn();
   const mockHandleSubmit = jest.fn();
   const mockHandleCancel = jest.fn();
+  const mockCreateSubscriber = jest.fn();
 
-  // Default mock implementation for the hook
-  const setupMockHook = (overrides = {}) => {
+  // Default mock implementation for the hooks
+  const setupMockHooks = (
+    overrides: {
+      newsletter?: Partial<ReturnType<typeof useNewsletterValidation>>;
+      createSubscriber?: Partial<ReturnType<typeof useCreateSubscriber>>;
+    } = {}
+  ) => {
     const mockSetFormValue = jest.fn();
 
-    const defaultValues = {
+    const defaultNewsletterValues = {
       formValue: { email: '' },
       setFormValue: mockSetFormValue,
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: mockHandleCancel,
     };
 
+    const defaultCreateSubscriberValues = {
+      createSubscriber: mockCreateSubscriber.mockResolvedValue({ success: true }),
+      loading: false,
+      error: null,
+    };
+
     (useNewsletterValidation as jest.Mock).mockReturnValue({
-      ...defaultValues,
-      ...overrides,
+      ...defaultNewsletterValues,
+      ...overrides.newsletter,
+    });
+
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      ...defaultCreateSubscriberValues,
+      ...overrides.createSubscriber,
     });
 
     return {
       mockSetFormValue,
       mockHandleSubmit,
       mockHandleCancel,
+      mockCreateSubscriber,
     };
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    setupMockHook();
+    setupMockHooks();
   });
 
   afterEach(() => {
@@ -62,8 +84,10 @@ describe('Newsletter Component', () => {
     expect(screen.getByTestId('cancel-button')).toBeInTheDocument();
   });
 
-  it('shows submitting text when isSubmitting is true', () => {
-    setupMockHook({ isSubmitting: true });
+  it('shows submitting text when loading is true', () => {
+    setupMockHooks({
+      createSubscriber: { loading: true },
+    });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
 
@@ -73,9 +97,11 @@ describe('Newsletter Component', () => {
   });
 
   it('displays validation message when showingError is true', () => {
-    setupMockHook({
-      validationMessage: 'Invalid email address',
-      showingError: true,
+    setupMockHooks({
+      newsletter: {
+        validationMessage: 'Invalid email address',
+        showingError: true,
+      },
     });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -86,7 +112,9 @@ describe('Newsletter Component', () => {
   });
 
   it('calls handleSubmit when form is submitted', () => {
-    setupMockHook({ formValue: { email: 'test@example.com' } });
+    setupMockHooks({
+      newsletter: { formValue: { email: 'test@example.com' } },
+    });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
 
@@ -108,9 +136,11 @@ describe('Newsletter Component', () => {
   it('updates form value when user types in email input', () => {
     const mockSetFormValue = jest.fn();
 
-    setupMockHook({
-      formValue: { email: '' },
-      setFormValue: mockSetFormValue,
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: '' },
+        setFormValue: mockSetFormValue,
+      },
     });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -123,10 +153,12 @@ describe('Newsletter Component', () => {
     expect(mockSetFormValue).toHaveBeenCalled();
   });
 
-  it('simulates integration with the hook for form submission', () => {
+  it('simulates integration with the hooks for form submission', () => {
     // Step 1: Initial state
-    setupMockHook({
-      formValue: { email: 'valid@example.com' },
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'valid@example.com' },
+      },
     });
 
     const { unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -141,9 +173,14 @@ describe('Newsletter Component', () => {
     unmount();
 
     // Step 2: Show submitting state
-    setupMockHook({
-      formValue: { email: 'valid@example.com' },
-      isSubmitting: true,
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'valid@example.com' },
+      },
+      createSubscriber: {
+        loading: true,
+        createSubscriber: jest.fn().mockResolvedValue({ success: true }),
+      },
     });
 
     const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -155,9 +192,14 @@ describe('Newsletter Component', () => {
     unmount2();
 
     // Step 3: After submission is complete
-    setupMockHook({
-      formValue: { email: 'valid@example.com' },
-      isSubmitting: false,
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'valid@example.com' },
+      },
+      createSubscriber: {
+        loading: false,
+        createSubscriber: jest.fn().mockResolvedValue({ success: true }),
+      },
     });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -168,8 +210,10 @@ describe('Newsletter Component', () => {
 
   it('shows error message when submitting with invalid email', () => {
     // Step 1: Initial state with invalid email
-    setupMockHook({
-      formValue: { email: 'invalidemail' },
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'invalidemail' },
+      },
     });
 
     const { unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -184,10 +228,12 @@ describe('Newsletter Component', () => {
     unmount();
 
     // Step 2: Show error state
-    setupMockHook({
-      formValue: { email: 'invalidemail' },
-      validationMessage: 'Invalid email address',
-      showingError: true,
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'invalidemail' },
+        validationMessage: 'Invalid email address',
+        showingError: true,
+      },
     });
 
     const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -201,9 +247,11 @@ describe('Newsletter Component', () => {
     unmount2();
 
     // Step 3: After error is cleared
-    setupMockHook({
-      formValue: { email: 'invalidemail' },
-      showingError: false,
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'invalidemail' },
+        showingError: false,
+      },
     });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -222,11 +270,16 @@ describe('Newsletter Component', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       // This is the important part - directly call onCancel
       handleCancel: () => onCancel(),
     }));
+
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: false,
+      error: null,
+    });
 
     render(<Newsletter setShowNewsletter={setShowNewsletter} />);
 
@@ -251,8 +304,10 @@ describe('Newsletter Component', () => {
 
   it('simulates form reset after successful submission', () => {
     // Step 1: Initial state with email
-    setupMockHook({
-      formValue: { email: 'test@example.com' },
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'test@example.com' },
+      },
     });
 
     const { unmount } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -270,9 +325,14 @@ describe('Newsletter Component', () => {
     unmount();
 
     // Step 2: Show submitting state
-    setupMockHook({
-      formValue: { email: 'test@example.com' },
-      isSubmitting: true,
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'test@example.com' },
+      },
+      createSubscriber: {
+        loading: true,
+        createSubscriber: jest.fn().mockResolvedValue({ success: true }),
+      },
     });
 
     const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -284,14 +344,122 @@ describe('Newsletter Component', () => {
     unmount2();
 
     // Step 3: After submission is complete with reset form
-    setupMockHook({
-      formValue: { email: '' }, // Reset email value
-      isSubmitting: false,
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: '' }, // Reset email value
+      },
+      createSubscriber: {
+        loading: false,
+        createSubscriber: jest.fn().mockResolvedValue({ success: true }),
+      },
     });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
 
     // Check form is reset
     expect(screen.getByTestId('email-input')).toHaveValue('');
+  });
+
+  it('shows submission error message when API returns error', async () => {
+    // Mock createSubscriber to return error
+    const mockCreateSubscriber = jest.fn().mockResolvedValue({
+      success: false,
+      error: 'This email is already subscribed',
+    });
+
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'test@example.com' },
+        handleSubmit: jest.fn().mockReturnValue(true), // Validation passes
+      },
+      createSubscriber: {
+        loading: false,
+        error: { message: 'This email is already subscribed' },
+        createSubscriber: mockCreateSubscriber,
+      },
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Submit the form to trigger the error handling
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('subscribe-button'));
+    });
+
+    // Wait for the error message to appear
+    await waitFor(() => {
+      expect(screen.getByTestId('submission-error-text')).toBeInTheDocument();
+      expect(screen.getByText('This email is already subscribed')).toBeInTheDocument();
+    });
+  });
+
+  it('shows success message when subscription is successful', async () => {
+    // Mock createSubscriber to return success
+    const mockCreateSubscriber = jest.fn().mockResolvedValue({
+      success: true,
+    });
+
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'test@example.com' },
+        handleSubmit: jest.fn().mockReturnValue(true), // Validation passes
+      },
+      createSubscriber: {
+        loading: false,
+        error: null,
+        createSubscriber: mockCreateSubscriber,
+      },
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Submit the form to trigger success
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('subscribe-button'));
+    });
+
+    // Wait for the success message to appear
+    await waitFor(() => {
+      expect(screen.getByTestId('success-text')).toBeInTheDocument();
+      expect(screen.getByText('Thank you for subscribing!')).toBeInTheDocument();
+    });
+  });
+
+  it('handles the scenario where same email is submitted twice - first success, then error', async () => {
+    // Test the error scenario directly without the success transition
+    const mockCreateSubscriberError = jest.fn().mockResolvedValue({
+      success: false,
+      error: 'This email address is already subscribed to our newsletter.',
+    });
+
+    setupMockHooks({
+      newsletter: {
+        formValue: { email: 'test@example.com' },
+        handleSubmit: jest.fn().mockReturnValue(true),
+      },
+      createSubscriber: {
+        loading: false,
+        error: { message: 'This email address is already subscribed to our newsletter.' },
+        createSubscriber: mockCreateSubscriberError,
+      },
+    });
+
+    render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
+
+    // Submit the form to trigger error
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('subscribe-button'));
+    });
+
+    // Wait for the error message to appear
+    await waitFor(() => {
+      expect(screen.getByTestId('submission-error-text')).toBeInTheDocument();
+      expect(
+        screen.getByText('This email address is already subscribed to our newsletter.')
+      ).toBeInTheDocument();
+    });
+
+    // Verify submission was called
+    expect(mockCreateSubscriberError).toHaveBeenCalledWith('test@example.com');
   });
 });

@@ -16,15 +16,28 @@ jest.mock('styled-components', () => {
       };
       // Add display name
       Component.displayName = `Styled(${tag})`;
+      // Add withConfig method to prevent errors
+      Component.withConfig = () => Component;
       return Component;
     };
+
+    // Add withConfig method to the factory function itself
+    StyledComponent.withConfig = () => StyledComponent;
+
     return StyledComponent;
   };
 
-  return {
+  const styled = {
     div: createStyledComponent('div'),
     button: createStyledComponent('button'),
     span: createStyledComponent('span'),
+  };
+
+  // Return both default and named exports
+  return {
+    __esModule: true,
+    default: styled,
+    ...styled,
   };
 });
 

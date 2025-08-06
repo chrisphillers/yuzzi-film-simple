@@ -2,7 +2,7 @@
 import { Box, Button, Form, FormField, TextInput, Text, Heading } from 'grommet';
 import { useNewsletterValidation } from '../../app/hooks/useNewsletter';
 import { useCreateSubscriber } from '../../app/hooks/useCreateSubscriber';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface NewsletterProps {
   setShowNewsletter: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,23 +23,33 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
   const { createSubscriber, loading: isSubmitting, error: apiError } = useCreateSubscriber();
 
   const [submissionStatusMessage, setSubmissionStatusMessage] = useState<string>('');
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+
+  // Handle success message display
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+        handleCancelValidation();
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess, handleCancelValidation]);
 
   const handleFormSubmit = async ({ value }: { value: { email: string } }) => {
     setSubmissionStatusMessage('');
     const isValid = validateForm({ value });
 
     if (isValid) {
-      const success = await createSubscriber(value.email);
+      const result = await createSubscriber(value.email);
 
-      if (success) {
+      if (result.success) {
         setFormValue({ email: '' });
-        handleCancelValidation();
+        setShowSuccess(true);
       } else {
-        if (apiError) {
-          setSubmissionStatusMessage(apiError.message);
-        } else {
-          setSubmissionStatusMessage('An unexpected error occurred.');
-        }
+        // Use the error message directly from the result
+        setSubmissionStatusMessage(result.error || 'An unexpected error occurred.');
       }
     } else {
     }
@@ -92,6 +102,12 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
               <Box align="center" justify="center" height="40px">
                 <Text data-testid="submitting-text" size="large">
                   Submitting...
+                </Text>
+              </Box>
+            ) : showSuccess ? (
+              <Box align="center" justify="center" height="40px">
+                <Text data-testid="success-text" size="large">
+                  Thank you for subscribing!
                 </Text>
               </Box>
             ) : (

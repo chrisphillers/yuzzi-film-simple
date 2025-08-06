@@ -1,9 +1,14 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Newsletter } from '../newsletter';
 import { useNewsletterValidation } from '../../../app/hooks/useNewsletter';
+import { useCreateSubscriber } from '../../../app/hooks/useCreateSubscriber';
 
 jest.mock('../../../app/hooks/useNewsletter', () => ({
   useNewsletterValidation: jest.fn(),
+}));
+
+jest.mock('../../../app/hooks/useCreateSubscriber', () => ({
+  useCreateSubscriber: jest.fn(),
 }));
 
 // Mock setTimeout to use fake timers
@@ -27,9 +32,14 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
+    });
+
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: false,
+      error: null,
     });
   });
 
@@ -62,7 +72,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -83,7 +92,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: 'Email is required',
       showingError: true,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -103,7 +111,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -124,7 +131,6 @@ describe('Newsletter Modal', () => {
       setFormValue: mockSetFormValue,
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -145,7 +151,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: 'Please enter a valid email address',
       showingError: true,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -165,7 +170,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -185,7 +189,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -201,14 +204,10 @@ describe('Newsletter Modal', () => {
     unmount();
 
     // Setup with submitting state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: true,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: true,
+      error: null,
     });
 
     const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -225,14 +224,10 @@ describe('Newsletter Modal', () => {
     unmount2();
 
     // Setup with completed state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: false,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: false,
+      error: null,
     });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -251,7 +246,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: mockHandleCancel,
     });
@@ -275,7 +269,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -297,7 +290,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -331,7 +323,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -355,14 +346,10 @@ describe('Newsletter Modal', () => {
     unmount();
 
     // Setup with submitting state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: true,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: true,
+      error: null,
     });
 
     const { container: container2, unmount: unmount2 } = render(
@@ -384,14 +371,10 @@ describe('Newsletter Modal', () => {
     unmount2();
 
     // Setup with completed state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: false,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: false,
+      error: null,
     });
 
     const { container: container3 } = render(

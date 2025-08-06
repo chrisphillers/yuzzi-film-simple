@@ -1,10 +1,15 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { useNewsletterValidation } from '../useNewsletter';
+import { useCreateSubscriber } from '../useCreateSubscriber';
 import { Newsletter } from '../../../components/newsletter/newsletter';
 
-// ONLY mock the hook, not the validation utility
+// Mock both hooks
 jest.mock('../useNewsletter', () => ({
   useNewsletterValidation: jest.fn(),
+}));
+
+jest.mock('../useCreateSubscriber', () => ({
+  useCreateSubscriber: jest.fn(),
 }));
 
 // Mock setTimeout to use fake timers
@@ -22,15 +27,20 @@ describe('Newsletter Modal', () => {
     // Replace with silent mock
     console.log = jest.fn();
 
-    // Default mock implementation
+    // Default mock implementation for both hooks
     (useNewsletterValidation as jest.Mock).mockReturnValue({
       formValue: { email: '' },
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
+    });
+
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn().mockResolvedValue({ success: true }),
+      loading: false,
+      error: null,
     });
   });
 
@@ -62,7 +72,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -83,7 +92,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: 'Email is required',
       showingError: true,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -103,7 +111,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -124,7 +131,6 @@ describe('Newsletter Modal', () => {
       setFormValue: mockSetFormValue,
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -145,7 +151,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: 'Please enter a valid email address',
       showingError: true,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -165,7 +170,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -185,7 +189,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -200,15 +203,11 @@ describe('Newsletter Modal', () => {
     // Cleanup
     unmount();
 
-    // Setup with submitting state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: true,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    // Setup with submitting state - loading comes from useCreateSubscriber
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: true,
+      error: null,
     });
 
     const { unmount: unmount2 } = render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -225,14 +224,10 @@ describe('Newsletter Modal', () => {
     unmount2();
 
     // Setup with completed state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: false,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: false,
+      error: null,
     });
 
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
@@ -251,7 +246,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: mockHandleCancel,
     });
@@ -275,7 +269,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: jest.fn(),
       handleCancel: jest.fn(),
     });
@@ -297,7 +290,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -331,7 +323,6 @@ describe('Newsletter Modal', () => {
       setFormValue: jest.fn(),
       validationMessage: '',
       showingError: false,
-      isSubmitting: false,
       handleSubmit: mockHandleSubmit,
       handleCancel: jest.fn(),
     });
@@ -354,15 +345,11 @@ describe('Newsletter Modal', () => {
     // Cleanup
     unmount();
 
-    // Setup with submitting state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: true,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    // Setup with submitting state - loading comes from useCreateSubscriber
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: true,
+      error: null,
     });
 
     const { container: container2, unmount: unmount2 } = render(
@@ -384,14 +371,10 @@ describe('Newsletter Modal', () => {
     unmount2();
 
     // Setup with completed state
-    (useNewsletterValidation as jest.Mock).mockReturnValue({
-      formValue: { email: 'valid@example.com' },
-      setFormValue: jest.fn(),
-      validationMessage: '',
-      showingError: false,
-      isSubmitting: false,
-      handleSubmit: jest.fn(),
-      handleCancel: jest.fn(),
+    (useCreateSubscriber as jest.Mock).mockReturnValue({
+      createSubscriber: jest.fn(),
+      loading: false,
+      error: null,
     });
 
     const { container: container3 } = render(
