@@ -14,8 +14,6 @@ import { Users } from './collections/Users';
 import { Media } from './collections/Media';
 // @ts-ignore
 import { Subscribers } from './collections/Subscribers';
-// @ts-ignore
-import emailAdapter from './email/sesAdapter';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = pathDirname(filename);
@@ -68,7 +66,6 @@ export default buildConfig({
     payloadCloudPlugin(),
     // storage-adapter-placeholder
   ],
-  email: emailAdapter,
   cors:
     process.env.NODE_ENV === 'production'
       ? [process.env.YUZZI_FRONTEND_URL || 'https://yuzzi.com']

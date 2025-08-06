@@ -18,24 +18,6 @@ export const addSubscriberToMailchimp = async (
       throw new Error('YUZZI_MAILCHIMP_LIST_ID is not defined');
     }
 
-    // Send confirmation email
-    await payload.sendEmail({
-      to: email,
-      subject: 'Confirm your subscription to Yuzzi',
-      html: `
-        <h1>Welcome to Yuzzi!</h1>
-        <p>Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:</p>
-        <p><a href="${process.env.YUZZI_FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}">Confirm Subscription</a></p>
-      `,
-      text: `
-        Welcome to Yuzzi!
-        
-        Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:
-        
-        ${process.env.YUZZI_FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}
-      `,
-    });
-
     // Add to Mailchimp with pending status
     const response = await mailchimp.lists.addListMember(listId, {
       email_address: email,

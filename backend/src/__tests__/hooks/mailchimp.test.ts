@@ -8,10 +8,6 @@ type MailchimpResponse = {
   id: string;
 };
 
-type PayloadEmailResponse = {
-  MessageId: string;
-};
-
 // Define types for Mailchimp errors
 interface MailchimpErrorResponse {
   response: {
@@ -61,31 +57,13 @@ afterEach(() => {
 });
 
 // Mock the Payload object
-const mockPayload = {
-  sendEmail: jest.fn().mockResolvedValue({ MessageId: 'test-message-id' } as PayloadEmailResponse),
-} as unknown as Payload;
+const mockPayload = {} as unknown as Payload;
 
 test('should successfully add a subscriber', async () => {
   const email = 'test@example.com';
   const result = await addSubscriberToMailchimp(email, mockPayload);
 
   expect(result).toBe(true);
-  expect(mockPayload.sendEmail).toHaveBeenCalledWith({
-    to: email,
-    subject: 'Confirm your subscription to Le Yuzzi',
-    html: `
-        <h1>Welcome to Le Yuzzi!</h1>
-        <p>Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:</p>
-        <p><a href="${process.env.YUZZI_FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}">Confirm Subscription</a></p>
-      `,
-    text: `
-        Welcome to Le Yuzzi!
-        
-        Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:
-        
-        ${process.env.YUZZI_FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}
-      `,
-  });
   expect(mailchimp.lists.addListMember).toHaveBeenCalledWith('test-list-id', {
     email_address: email,
     status: 'pending',
