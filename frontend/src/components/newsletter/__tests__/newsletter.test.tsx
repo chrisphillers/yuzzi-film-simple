@@ -54,7 +54,7 @@ describe('Newsletter Modal', () => {
     render(<Newsletter setShowNewsletter={mockSetShowNewsletter} />);
 
     // Check for brand text
-    expect(screen.getByText('LE YUZZI')).toBeInTheDocument();
+    expect(screen.getByText('YUZZI')).toBeInTheDocument();
 
     // Check for input field
     expect(screen.getByTestId('email-input')).toBeInTheDocument();

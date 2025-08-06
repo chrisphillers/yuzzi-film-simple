@@ -89,7 +89,7 @@ export const Newsletter: React.FC<NewsletterProps> = ({ setShowNewsletter }) => 
               YUZZI
             </Heading>
             {/* <YuzziHeading
-              label="LE YUZZI"
+              label="YUZZI"
               align={'center'}
               weight="heavy"
               href="/"

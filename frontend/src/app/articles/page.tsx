@@ -20,7 +20,7 @@ import { SidebarLayout } from '../layout';
 //   const parentMetadata = await parent();
 //   return {
 //     ...parentMetadata,
-//     title: `Le Yuzzi - ${params.id}`,
+//     title: `Yuzzi - ${params.id}`,
 //   };
 // }
 

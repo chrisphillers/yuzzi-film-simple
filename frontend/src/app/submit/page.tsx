@@ -21,7 +21,7 @@ import { FilmSubmissionForm } from '../about/components';
 //   const parentMetadata = await parent();
 //   return {
 //     ...parentMetadata,
-//     title: `Le Yuzzi - ${params.id}`,
+//     title: `Yuzzi - ${params.id}`,
 //   };
 // }
 const { nav } = await getAbout();
