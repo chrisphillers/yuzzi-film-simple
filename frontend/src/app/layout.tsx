@@ -4,26 +4,26 @@ import { Menu } from '@/components/menu';
 import { Footer } from '@/components/footer';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Box, Grid, BoxExtendedProps } from 'grommet';
+import { Box, Grid, BoxExtendedProps, Text } from 'grommet';
 // import { Watch } from '../components/modals/watch';
 // import { AppProvider } from './context/scrollcontext';
 
 export const metadata: Metadata = {
-  title: 'Le Yuzzi',
-  description: 'Discover and watch exceptional films presented by Le Yuzzi',
+  title: 'Yuzzi',
+  description: 'Discover and watch exceptional films presented by Yuzzi',
   robots: {
     index: true,
     follow: true,
   },
   openGraph: {
-    title: 'Le Yuzzi',
-    description: 'Discover and watch exceptional films presented by Le Yuzzi',
+    title: 'Yuzzi',
+    description: 'Discover and watch exceptional films presented by Yuzzi',
     images: ['/path/to/og-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Le Yuzzi',
-    description: 'Discover and watch exceptional films presented by Le Yuzzi',
+    title: 'Yuzzi',
+    description: 'Discover and watch exceptional films presented by Yuzzi',
     images: ['/path/to/twitter-image.jpg'],
   },
 };
@@ -59,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             margin={{ top: 'medium' }}
           >
             <Menu gridArea="header" />
+
             <Box {...CONTENT_WIDTH_PROPS} gridArea="main">
               <main>{children}</main>
             </Box>

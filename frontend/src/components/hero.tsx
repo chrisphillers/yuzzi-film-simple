@@ -83,8 +83,9 @@ export const Hero = ({ title }: { title: string }) => {
             {/* <Suspense fallback={<VideoSkeleton />}> */}
             <VimeoPlayer
               id={title}
-              video="1067064372"
+              // video="1067064372"
               // video="76979871"
+              video="1079897995"
               autoplay={true}
               muted={true}
               loop={true}
@@ -105,7 +106,8 @@ export const Hero = ({ title }: { title: string }) => {
         <FullScreenVideo
           onClose={() => setOpenVideo(!openVideo)}
           title={title}
-          videoID={150781794}
+          videoID={1079897995}
+          // videoID={150781794}
         />
       )}
     </Box>

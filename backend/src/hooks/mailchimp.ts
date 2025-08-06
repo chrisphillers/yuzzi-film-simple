@@ -21,14 +21,14 @@ export const addSubscriberToMailchimp = async (
     // Send confirmation email
     await payload.sendEmail({
       to: email,
-      subject: 'Confirm your subscription to Le Yuzzi',
+      subject: 'Confirm your subscription to Yuzzi',
       html: `
-        <h1>Welcome to Le Yuzzi!</h1>
+        <h1>Welcome to Yuzzi!</h1>
         <p>Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:</p>
         <p><a href="${process.env.YUZZI_FRONTEND_URL}/confirm-subscription?email=${encodeURIComponent(email)}">Confirm Subscription</a></p>
       `,
       text: `
-        Welcome to Le Yuzzi!
+        Welcome to Yuzzi!
         
         Thank you for subscribing to our newsletter. Please confirm your subscription by clicking the link below:
         

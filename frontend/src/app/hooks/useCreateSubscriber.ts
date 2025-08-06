@@ -21,7 +21,7 @@ const CREATE_SUBSCRIBER_MUTATION = `
 // Use the proxied endpoint
 const GRAPHQL_ENDPOINT = '/api/graphql';
 
-export const useCreateSubscriber = (): UseCreateSubscriberReturn => {
+export const useCreateSubs0criber = (): UseCreateSubscriberReturn => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ApiError | null>(null);
 

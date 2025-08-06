@@ -18,9 +18,10 @@ import { Menu as MenuIcon } from 'grommet-icons';
 import { Newsletter } from './newsletter/newsletter';
 
 const menuItems = [
-  { name: 'ARTICLES', href: '/articles' },
-  { name: 'ARCHIVES', href: '/archives' },
+  // { name: 'ARTICLES', href: '/articles' },
+  // { name: 'ARCHIVES', href: '/archives' },
   { name: 'ABOUT', href: '/about' },
+  { name: 'JOURNAL', href: '/journal' },
   { name: 'SUBMIT', href: '/submit' },
 ];
 
@@ -66,7 +67,7 @@ export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
           <>
             {showSidebar && <MobileMenu onClose={() => setShowSidebar(false)}></MobileMenu>}
             <Box direction="row" align="center" width="full" style={{ position: 'relative' }}>
-              <YuzziHeading label="LE YUZZI" align={'center'} weight="heavy" href="/" />
+              <YuzziHeading label="YUZZI" align={'center'} weight="heavy" href="/" />
               <Box style={{ position: 'absolute', right: 0 }}>
                 <Button icon={<MenuIcon />} onClick={() => setShowSidebar(true)} />
               </Box>
@@ -83,7 +84,7 @@ export const Menu = ({ gridArea, ...rest }: { gridArea?: string }) => {
             areas={[['brand', 'menu', 'newsletter']]}
             align="center"
           >
-            <YuzziHeading align={'left'} label="LE YUZZI" href="/" weight="heavy" />
+            <YuzziHeading align={'left'} label="YUZZI" href="/" weight="heavy" />
             <Box gridArea="menu" align="center">
               <Nav direction="row" gap="medium">
                 {menuItems.map((item) => (
@@ -182,7 +183,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onClose }) => {
         <Box direction="row" justify="between" align="center" pad={{ bottom: 'medium' }}>
           <Box flex />
           <Heading level={2} margin="none" color="white" textAlign="center">
-            LE YUZZI
+            YUZZI
           </Heading>
           <Box flex align="end">
             <Button plain icon={<Close color="white" size="medium" />} onClick={onClose} />

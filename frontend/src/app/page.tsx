@@ -1,32 +1,41 @@
 import { getFeatureFilm } from '@/lib/data';
 import { Box, Text, Page, Paragraph, Anchor } from 'grommet';
 import { Hero } from '../components/hero';
+import { MoreInfo } from '@/components/ui/button';
 import { FilmArticleContent } from '../components/film-article';
 // import { Watch } from '../components/modals/watch';
+// import { useState } from 'react';
 
 export default async function Home() {
   // Server-side fetch the feature film data
   const featureFilm = await getFeatureFilm();
 
   const { film } = featureFilm;
-
+  // const [open, openSet] = useState(false);
   return (
     <section>
       <Box>
-        <Box height="calc(100vh - 150px)" justify="center">
+        <Box
+          // height="100vh"
+          height="calc(100vh - 60px)"
+          justify="center"
+        >
           <Box>
             <Hero title={film.title} />
 
             {/* TODO: Sort html/Grommet semantics paragraph/page etc */}
+            <MoreInfo></MoreInfo>
 
-            <Paragraph margin={{ vertical: 'medium' }} fill>
-              <Text weight="bold">LUTTE JEUNESSE</Text> a film by{' '}
-              <Text weight="bold">THIERRY DE PERETTI</Text>. 2018. 55 min. A simple casting process
-              becomes a sociological inquiry into Corsican nationalism in this short film by the
-              acclaimed French filmmaker.
-            </Paragraph>
+            {/* {true ? (
+              <Paragraph margin={{ vertical: 'medium' }} fill>
+                <Text weight="bold">LUTTE JEUNESSE</Text> a film by{' '}
+                <Text weight="bold">THIERRY DE PERETTI</Text>. 2018. 55 min. A simple casting
+                process becomes a sociological inquiry into Corsican nationalism in this short film
+                by the acclaimed French filmmaker.
+              </Paragraph>
+            ) : null} */}
 
-            <Box align="end" margin={{ vertical: 'small' }}>
+            {/* <Box align="end" margin={{ vertical: 'small' }}>
               <Anchor
                 style={{
                   textDecoration: 'underline',
@@ -36,7 +45,7 @@ export default async function Home() {
               >
                 READ MORE
               </Anchor>
-            </Box>
+            </Box> */}
           </Box>
         </Box>
         <Box alignContent="center" justify="center" align="center">
@@ -45,7 +54,7 @@ export default async function Home() {
             style={{ maxWidth: '650px' }}
             // margin={{ horizontal: 'xxlarge' }}
           >
-            <FilmArticleContent article={featureFilm}></FilmArticleContent>
+            {/* <FilmArticleContent article={featureFilm}></FilmArticleContent> */}
           </Page>
         </Box>
       </Box>
